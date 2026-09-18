@@ -99,9 +99,10 @@
         <b-table-column field="created_at" label="Registered" sortable v-slot="props">
           {{ props.row.created_at }}
         </b-table-column>
-        <b-table-column label="" v-slot="props" width="60">
+        <b-table-column label="" v-slot="props" width="100">
           <a href="#" @click.prevent="removeToken(props.row.id)">
             <b-icon icon="trash-can-outline" />
+            {{ $t('globals.buttons.delete') }}
           </a>
         </b-table-column>
         <template #empty>
