@@ -51,3 +51,9 @@ services:
     volumes:
       - ./uploads:/listmonk/uploads:rw                        # Mount an uploads directory on the host to /listmonk/uploads inside the container.
                                                               # To use this, change directory path in Admin -> Settings -> Media to /listmonk/uploads
+    networks:
+      - web                                                   # Shared with Caddy (~/infra/caddy). Must exist: docker network ls | grep web
+
+networks:
+  web:
+    external: true
