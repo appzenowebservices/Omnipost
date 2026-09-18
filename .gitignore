@@ -18,3 +18,10 @@ node_modules
 listmonk
 dist/*
 uploads/
+# Local env / secrets — never commit.
+.env
+smtp/.env
+# Local machine / tooling files.
+desktop.ini
+Thumbs.db
+oc.md

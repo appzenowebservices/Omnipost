@@ -186,6 +186,10 @@ func init() {
 		initSettings(q.Query, db, ko)
 	}
 
+	// OmniPost SaaS: OMNIPOST_SMTP_* env vars override the DB SMTP config
+	// with the Hostinger preset (no-op when unset).
+	applyOmniPostSMTPEnv(ko, db)
+
 	// Prepare queries.
 	queries = prepareQueries(qMap, db, ko)
 }

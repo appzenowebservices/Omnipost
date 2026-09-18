@@ -1,31 +1,61 @@
+// OmniPost SMTP test sender (Hostinger preset by default).
+// Config comes from environment / smtp/.env — never hardcode credentials.
+//   cp .env.sample .env   (then fill in SMTP_USER / SMTP_PASS)
+//   npm install && node index.js
+require("dotenv").config();
+
 const nodemailer = require("nodemailer");
 
+function env(name, fallback = "") {
+  const v = process.env[name];
+  return v === undefined || v === "" ? fallback : v;
+}
+
 async function main() {
+  const host = env("SMTP_HOST", "smtp.hostinger.com");
+  const port = parseInt(env("SMTP_PORT", "465"), 10);
+  const secure = env("SMTP_SECURE", port === 465 ? "true" : "false") === "true";
+  const user = env("SMTP_USER", "");
+  const pass = env("SMTP_PASS", "");
+  const from = env("SMTP_FROM", user ? `"OmniPost" <${user}>` : "");
+  const to = env("SMTP_TO", user);
+  const subject = env("SMTP_SUBJECT", "OmniPost SMTP test");
+
+  if (!user || !pass) {
+    console.error("Missing SMTP_USER / SMTP_PASS. Copy smtp/.env.sample to smtp/.env and fill them in.");
+    process.exitCode = 1;
+    return;
+  }
+  if (!from || !to) {
+    console.error("Missing SMTP_FROM / SMTP_TO.");
+    process.exitCode = 1;
+    return;
+  }
+
   const transporter = nodemailer.createTransport({
-    host: "smtp.hostinger.com",
-    port: 465,
-    secure: true,
-    auth: {
-      user: "contact@appzenowebservices.com",
-      pass: "%1K#&D)ErQg,aXfi{",
-    },
+    host,
+    port,
+    secure,
+    auth: { user, pass },
   });
 
   const info = await transporter.sendMail({
-    from: '"Apni Desi Dukaan" <contact@appzenowebservices.com>',
-    to: "contact@appzenowebservices.com",
-    subject: "It Worked Man!",
+    from,
+    to,
+    subject,
     html: `
       <div style="font-family:Arial, sans-serif; text-align:center; padding:20px;">
-        <img src="https://apnidesidukaan.com/logo.png" alt="Apni Desi Dukaan" width="120" style="border-radius:10px;" />
-        <h2 style="color:#222;">It Worked Man!</h2>
-        <p>Heer ne tainu chorr diya.</p>
+        <h2 style="color:#222;">${subject}</h2>
+        <p>Sent via OmniPost (${host}).</p>
       </div>
     `,
-    headers: { "X-Mailer": "NodeMailer via Hostinger" },
+    headers: { "X-Mailer": "OmniPost via Nodemailer" },
   });
 
-  console.log("✅ Email sent successfully:", info.messageId);
+  console.log("Email sent successfully:", info.messageId);
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+  process.exitCode = 1;
+});

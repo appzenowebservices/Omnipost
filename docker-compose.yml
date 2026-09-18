@@ -24,6 +24,8 @@ services:
                                                               # --install --idempotent ensures that DB installation happens only once on an empty DB, on the first ever start.
                                                               # --upgrade automatically runs any DB migrations when a new image is pulled.
 
+    env_file:
+      - .env                                                  # OmniPost: OMNIPOST_SMTP_* live here (see .env.sample).
     environment:                                              # The same params as in config.toml are passed as env vars here.
       LISTMONK_app__address: 0.0.0.0:9000
       LISTMONK_db__user: *db-user
@@ -38,6 +40,15 @@ services:
       TZ: Etc/UTC
       LISTMONK_ADMIN_USER: ${LISTMONK_ADMIN_USER:-}           # If these (optional) are set during the first `docker compose up`, then the Super Admin user is automatically created.
       LISTMONK_ADMIN_PASSWORD: ${LISTMONK_ADMIN_PASSWORD:-}   # Otherwise, the user can be setup on the web app after the first visit to http://localhost:9000
+      # OmniPost default e-mail channel (Hostinger preset). Empty = use DB / Settings UI.
+      OMNIPOST_SMTP_HOST: ${OMNIPOST_SMTP_HOST:-}
+      OMNIPOST_SMTP_PORT: ${OMNIPOST_SMTP_PORT:-}
+      OMNIPOST_SMTP_USERNAME: ${OMNIPOST_SMTP_USERNAME:-}
+      OMNIPOST_SMTP_PASSWORD: ${OMNIPOST_SMTP_PASSWORD:-}
+      OMNIPOST_SMTP_AUTH: ${OMNIPOST_SMTP_AUTH:-}
+      OMNIPOST_SMTP_TLS: ${OMNIPOST_SMTP_TLS:-}
+      OMNIPOST_SMTP_NAME: ${OMNIPOST_SMTP_NAME:-}
+      OMNIPOST_FROM_EMAIL: ${OMNIPOST_FROM_EMAIL:-}
     volumes:
       - ./uploads:/listmonk/uploads:rw                        # Mount an uploads directory on the host to /listmonk/uploads inside the container.
                                                               # To use this, change directory path in Admin -> Settings -> Media to /listmonk/uploads

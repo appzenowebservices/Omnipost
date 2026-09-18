@@ -227,10 +227,10 @@ CREATE TABLE settings (
 );
 DROP INDEX IF EXISTS idx_settings_key; CREATE INDEX idx_settings_key ON settings(key);
 INSERT INTO settings (key, value) VALUES
-    ('app.site_name', '"Mailing list"'),
+    ('app.site_name', '"OmniPost"'),
     ('app.root_url', '"http://localhost:9000"'),
     ('app.favicon_url', '""'),
-    ('app.from_email', '"listmonk <noreply@listmonk.yoursite.com>"'),
+    ('app.from_email', '"OmniPost <contact@appzenowebservices.com>"'),
     ('app.logo_url', '""'),
     ('app.concurrency', '10'),
     ('app.message_rate', '10'),
@@ -279,7 +279,9 @@ INSERT INTO settings (key, value) VALUES
     ('upload.s3.bucket_type', '"public"'),
     ('upload.s3.expiry', '"167h"'),
     ('smtp',
-        '[{"enabled":true, "host":"smtp.yoursite.com","port":25,"auth_protocol":"cram","username":"username","password":"password","hello_hostname":"","max_conns":10,"idle_timeout":"15s","wait_timeout":"5s","max_msg_retries":2,"msg_retry_delay":"10ms","tls_type":"STARTTLS","tls_skip_verify":false,"email_headers":[], "from_addresses":[]},
+        -- OmniPost default provider preset: Hostinger. Password is a placeholder;
+        -- set the real one via OMNIPOST_SMTP_PASSWORD env (see .env.sample) or the Settings UI.
+        '[{"name":"email-omnipost","enabled":true, "host":"smtp.hostinger.com","port":465,"auth_protocol":"login","username":"contact@appzenowebservices.com","password":"changeme","hello_hostname":"","max_conns":10,"idle_timeout":"15s","wait_timeout":"5s","max_msg_retries":2,"msg_retry_delay":"10ms","tls_type":"TLS","tls_skip_verify":false,"email_headers":[], "from_addresses":[]},
           {"enabled":false, "host":"smtp.gmail.com","port":465,"auth_protocol":"login","username":"username@gmail.com","password":"password","hello_hostname":"","max_conns":10,"idle_timeout":"15s","wait_timeout":"5s","max_msg_retries":2,"msg_retry_delay":"10ms","tls_type":"TLS","tls_skip_verify":false,"email_headers":[], "from_addresses":[]}]'),
     ('messengers', '[]'),
     ('bounce.enabled', 'false'),

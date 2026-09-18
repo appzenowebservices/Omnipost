@@ -69,6 +69,7 @@
               </div>
             </div><!-- auth -->
             <div class="spaced-links is-size-7">
+              <a href="#" @click.prevent="() => fillSettings(n, 'hostinger')">Hostinger (OmniPost default)</a>
               <a href="#" @click.prevent="() => fillSettings(n, 'gmail')">Gmail</a>
               <a href="#" @click.prevent="() => fillSettings(n, 'ses')">Amazon SES</a>
               <a href="#" @click.prevent="() => fillSettings(n, 'azure')">Azure ACS</a>
@@ -238,6 +239,9 @@ import { mapState } from 'vuex';
 import { regDuration } from '../../constants';
 
 const smtpTemplates = {
+  hostinger: {
+    host: 'smtp.hostinger.com', port: 465, auth_protocol: 'login', tls_type: 'TLS',
+  },
   gmail: {
     host: 'smtp.gmail.com', port: 465, auth_protocol: 'login', tls_type: 'TLS',
   },

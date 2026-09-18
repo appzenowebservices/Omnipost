@@ -60,6 +60,10 @@ func install(lastVer string, db *sqlx.DB, fs stuffbin.FileSystem, prompt, idempo
 		lo.Fatalf("error migrating DB schema: %v", err)
 	}
 
+	// OmniPost SaaS: seed the Hostinger SMTP preset from OMNIPOST_SMTP_*
+	// env vars when present (no-op when unset).
+	applyOmniPostSMTPEnv(ko, db)
+
 	// Load the queries.
 	q := prepareQueries(qMap, db, ko)
 
