@@ -3,6 +3,8 @@
 **/.env
 **/.git
 **/.gitignore
+# ... except the frontend's, which eslint uses as its ignore file.
+!frontend/.gitignore
 **/.project
 **/.settings
 **/.toolstarget
