@@ -1,3 +1,44 @@
+# ---- Stage 1: build the Vue admin frontend (incl. email-builder) ----
+FROM node:20-bookworm AS frontend
+WORKDIR /build
+
+COPY frontend ./frontend
+
+# Email-builder first (mirrors `make build-email-builder`).
+WORKDIR /build/frontend/email-builder
+RUN corepack enable \
+    && yarn install --no-immutable \
+    && yarn build
+
+# Main admin frontend (mirrors `make build-frontend`).
+WORKDIR /build/frontend
+RUN mkdir -p public/static/email-builder \
+    && cp -r email-builder/dist/* public/static/email-builder/ \
+    && yarn install --no-immutable \
+    && yarn build
+
+# ---- Stage 2: build the Go backend and pack static assets into it ----
+FROM golang:1.27-bookworm AS backend
+WORKDIR /build
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+COPY --from=frontend /build/frontend/dist ./frontend/dist
+
+RUN CGO_ENABLED=0 go build -o listmonk -ldflags="-s -w" ./cmd \
+    && STUFFBIN_BIN="$(go env GOPATH)/bin/stuffbin" \
+    && go install github.com/knadh/stuffbin/... \
+    && "$STUFFBIN_BIN" -a stuff -in listmonk -out listmonk \
+        config.toml.sample \
+        schema.sql queries:/queries permissions.json \
+        static/public:/public \
+        static/email-templates \
+        frontend/dist:/admin \
+        i18n:/i18n
+
+# ---- Stage 3: minimal runtime (unchanged behaviour) ----
 FROM alpine:latest
 
 # Install dependencies
@@ -6,8 +47,8 @@ RUN apk --no-cache add ca-certificates tzdata shadow su-exec
 # Set the working directory
 WORKDIR /listmonk
 
-# Copy only the necessary files
-COPY listmonk .
+# Copy the packed binary from the builder.
+COPY --from=backend /build/listmonk .
 COPY config.toml.sample config.toml
 
 # Copy the entrypoint script

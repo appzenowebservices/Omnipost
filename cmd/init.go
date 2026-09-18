@@ -328,6 +328,24 @@ func initDB() *sqlx.DB {
 		lo.Fatalf("error loading db config: %v", err)
 	}
 
+	// OmniPost: a full Postgres URL (eg: Supabase) may be supplied verbatim.
+	// It takes precedence over the split db.* fields. Use the direct
+	// connection (Supabase port 5432), not the transaction pooler (6543),
+	// as the app relies on prepared statements.
+	if dsn := firstEnv("OMNIPOST_DATABASE_URL", "DATABASE_URL"); dsn != "" {
+		lo.Printf("connecting to db via OMNIPOST_DATABASE_URL")
+		db, err := sqlx.Connect("postgres", dsn)
+		if err != nil {
+			lo.Fatalf("error connecting to DB: %v", err)
+		}
+
+		db.SetMaxOpenConns(c.MaxOpen)
+		db.SetMaxIdleConns(c.MaxIdle)
+		db.SetConnMaxLifetime(c.MaxLifetime)
+
+		return db.Unsafe()
+	}
+
 	lo.Printf("connecting to db: %s:%d/%s", c.Host, c.Port, c.DBName)
 
 	// Build Postgres DSN conditionally with non-empty fields.

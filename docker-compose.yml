@@ -1,50 +1,49 @@
+# OmniPost runs against a managed Postgres (eg: Supabase) supplied via
+# OMNIPOST_DATABASE_URL in .env (see .env.sample). There is intentionally no
+# local db service here.
+#
 # All LISTMONK_* env variables also support the LISTMONK_*_FILE pattern for loading secrets from files with Docker secrets and Podman
 # eg: LISTMONK_ADMIN_USER -> LISTMONK_ADMIN_USER_FILE=/path/to/file_with_value
 
-x-db-credentials: &db-credentials                             # Use the default POSTGRES_ credentials if they're available or simply default to "listmonk"
-  POSTGRES_USER: &db-user listmonk                            # for database user, password, and database name
-  POSTGRES_PASSWORD: &db-password listmonk
-  POSTGRES_DB: &db-name listmonk
-
 services:
-  # listmonk app
+  # omnipost app
   app:
-    image: listmonk/listmonk:latest
-    container_name: listmonk_app
+    build: .
+    container_name: omnipost_app
     restart: unless-stopped
     ports:
       - "9000:9000"                                           # To change the externally exposed port, change to: $custom_port:9000
-    networks:
-      - listmonk
-    hostname: listmonk.example.com                            # Recommend using FQDN for hostname
-    depends_on:
-      - db
+    hostname: omnipost.example.com                            # Recommend using FQDN for hostname
     command: [sh, -c, "./listmonk --install --idempotent --yes --config '' && ./listmonk --upgrade --yes --config '' && ./listmonk --config ''"]
                                                               # --config (file) param is set to empty so that listmonk only uses the env vars (below) for config.
                                                               # --install --idempotent ensures that DB installation happens only once on an empty DB, on the first ever start.
                                                               # --upgrade automatically runs any DB migrations when a new image is pulled.
 
     env_file:
-      - .env                                                  # OmniPost: OMNIPOST_SMTP_* live here (see .env.sample).
+      - .env                                                  # OmniPost: OMNIPOST_DATABASE_URL + OMNIPOST_SMTP_* live here (see .env.sample).
     environment:                                              # The same params as in config.toml are passed as env vars here.
       LISTMONK_app__address: 0.0.0.0:9000
-      LISTMONK_db__user: *db-user
-      LISTMONK_db__password: *db-password
-      LISTMONK_db__database: *db-name
-      LISTMONK_db__host: db
-      LISTMONK_db__port: 5432
-      LISTMONK_db__ssl_mode: disable
+      # Cloud DB URL (Supabase direct connection, port 5432 — NOT the 6543
+      # transaction pooler, as the app uses prepared statements).
+      OMNIPOST_DATABASE_URL: "${OMNIPOST_DATABASE_URL:-}"
+      # Fallback split DB fields (used only when OMNIPOST_DATABASE_URL is empty).
+      LISTMONK_db__host: ${LISTMONK_db__host:-}
+      LISTMONK_db__port: ${LISTMONK_db__port:-}
+      LISTMONK_db__user: ${LISTMONK_db__user:-}
+      LISTMONK_db__password: "${LISTMONK_db__password:-}"
+      LISTMONK_db__database: ${LISTMONK_db__database:-}
+      LISTMONK_db__ssl_mode: ${LISTMONK_db__ssl_mode:-require}
       LISTMONK_db__max_open: 25
       LISTMONK_db__max_idle: 25
       LISTMONK_db__max_lifetime: 300s
       TZ: Etc/UTC
       LISTMONK_ADMIN_USER: ${LISTMONK_ADMIN_USER:-}           # If these (optional) are set during the first `docker compose up`, then the Super Admin user is automatically created.
-      LISTMONK_ADMIN_PASSWORD: ${LISTMONK_ADMIN_PASSWORD:-}   # Otherwise, the user can be setup on the web app after the first visit to http://localhost:9000
+      LISTMONK_ADMIN_PASSWORD: "${LISTMONK_ADMIN_PASSWORD:-}"   # Otherwise, the user can be setup on the web app after the first visit to http://localhost:9000
       # OmniPost default e-mail channel (Hostinger preset). Empty = use DB / Settings UI.
       OMNIPOST_SMTP_HOST: ${OMNIPOST_SMTP_HOST:-}
       OMNIPOST_SMTP_PORT: ${OMNIPOST_SMTP_PORT:-}
       OMNIPOST_SMTP_USERNAME: ${OMNIPOST_SMTP_USERNAME:-}
-      OMNIPOST_SMTP_PASSWORD: ${OMNIPOST_SMTP_PASSWORD:-}
+      OMNIPOST_SMTP_PASSWORD: "${OMNIPOST_SMTP_PASSWORD:-}"
       OMNIPOST_SMTP_AUTH: ${OMNIPOST_SMTP_AUTH:-}
       OMNIPOST_SMTP_TLS: ${OMNIPOST_SMTP_TLS:-}
       OMNIPOST_SMTP_NAME: ${OMNIPOST_SMTP_NAME:-}
@@ -52,30 +51,3 @@ services:
     volumes:
       - ./uploads:/listmonk/uploads:rw                        # Mount an uploads directory on the host to /listmonk/uploads inside the container.
                                                               # To use this, change directory path in Admin -> Settings -> Media to /listmonk/uploads
-
-  # Postgres database
-  db:
-    image: postgres:17-alpine
-    container_name: listmonk_db
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:5432:5432"                                 # Only bind on the local interface. To connect to Postgres externally, change this to 0.0.0.0
-    networks:
-      - listmonk
-    environment:
-      <<: *db-credentials
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U listmonk"]
-      interval: 10s
-      timeout: 5s
-      retries: 6
-    volumes:
-      - type: volume
-        source: listmonk-data
-        target: /var/lib/postgresql/data
-
-networks:
-  listmonk:
-
-volumes:
-  listmonk-data:
