@@ -137,6 +137,12 @@ const routes = [
     meta: { title: 'maintenance.title', group: 'settings' },
     component: () => import('../views/Maintenance.vue'),
   },
+  {
+    path: '/notifications',
+    name: 'notifications',
+    meta: { title: 'notifications.title', group: 'settings' },
+    component: () => import('../views/Notifications.vue'),
+  },
 ];
 
 const router = new VueRouter({

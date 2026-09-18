@@ -443,6 +443,29 @@ export const testSMTP = async (data) => http.post(
   { loading: models.settings, disableToast: true },
 );
 
+// Web-push (FCM) browser notifications.
+export const savePushToken = async (data) => http.post(
+  '/api/push/tokens',
+  data,
+  { disableToast: true },
+);
+
+export const getPushTokens = async () => http.get(
+  '/api/push/tokens',
+  { disableToast: true },
+);
+
+export const deletePushToken = async (id) => http.delete(
+  `/api/push/tokens/${id}`,
+  { disableToast: true },
+);
+
+export const sendTestPush = async (data) => http.post(
+  '/api/push/test',
+  data,
+  { disableToast: true },
+);
+
 export const getLogs = async () => http.get(
   '/api/logs',
   { loading: models.logs, camelCase: false },

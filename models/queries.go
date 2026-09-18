@@ -138,6 +138,12 @@ type Queries struct {
 	DeleteRole            *sqlx.Stmt `query:"delete-role"`
 	UpsertListPermissions *sqlx.Stmt `query:"upsert-list-permissions"`
 	DeleteListPermission  *sqlx.Stmt `query:"delete-list-permission"`
+
+	UpsertPushToken     *sqlx.Stmt `query:"upsert-push-token"`
+	GetPushTokens       *sqlx.Stmt `query:"get-push-tokens"`
+	GetActivePushTokens *sqlx.Stmt `query:"get-active-push-tokens"`
+	DeactivatePushToken *sqlx.Stmt `query:"deactivate-push-token"`
+	DeletePushToken     *sqlx.Stmt `query:"delete-push-token"`
 }
 
 // compileSubscriberQueryTpl takes an arbitrary WHERE expressions

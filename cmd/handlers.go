@@ -196,6 +196,13 @@ func initHTTPHandlers(e *echo.Echo, a *App) {
 
 		g.POST("/api/tx", pm(a.SendTxMessage, "tx:send"))
 
+		// Web-push (FCM) browser notifications. Any authenticated admin may
+		// register their own browser; managing and sending needs settings perms.
+		g.POST("/api/push/tokens", a.SavePushToken)
+		g.GET("/api/push/tokens", pm(a.GetPushTokens, "settings:get"))
+		g.DELETE("/api/push/tokens/:id", pm(hasID(a.DeletePushToken), "settings:manage"))
+		g.POST("/api/push/test", pm(a.SendTestPush, "settings:manage"))
+
 		g.GET("/api/profile", a.GetUserProfile)
 		g.PUT("/api/profile", a.UpdateUserProfile)
 		g.GET("/api/users", pm(a.GetUsers, "users:get"))
@@ -260,6 +267,10 @@ func initHTTPHandlers(e *echo.Echo, a *App) {
 		g.GET("/api/public/lists", a.GetPublicLists)
 		g.POST("/api/public/subscription", a.PublicSubscription)
 		g.GET("/api/public/captcha/altcha", a.AltchaChallenge)
+		// Public Firebase web config for the admin JS push client (public keys only).
+		g.GET("/api/public/firebase-config", a.GetFirebaseConfig)
+		// FCM service worker must be served from the site root scope.
+		g.GET("/firebase-messaging-sw.js", a.ServeFirebaseSW)
 		if a.cfg.EnablePublicArchive {
 			g.GET("/api/public/archive", a.GetCampaignArchives)
 		}

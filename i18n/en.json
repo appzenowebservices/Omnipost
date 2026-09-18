@@ -332,6 +332,7 @@
     "menu.media": "Media",
     "menu.newCampaign": "Create new",
     "menu.settings": "Settings",
+    "notifications.title": "Push Notifications",
     "public.archiveEmpty": "No archived messages yet.",
     "public.archiveTitle": "Mailing list archive",
     "public.blocklisted": "Permanently unsubscribed.",

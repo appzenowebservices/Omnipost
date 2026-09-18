@@ -302,6 +302,19 @@ INSERT INTO settings (key, value) VALUES
     ('appearance.public.custom_js', '""'),
     ('maintenance.db', '{"vacuum": false, "vacuum_cron_interval": "0 2 * * *"}');
 
+-- push tokens (web-push / FCM browser registrations)
+DROP TABLE IF EXISTS push_tokens CASCADE;
+CREATE TABLE push_tokens (
+    id              SERIAL PRIMARY KEY,
+    uuid uuid       NOT NULL UNIQUE,
+    token           TEXT NOT NULL UNIQUE,
+    label           TEXT NOT NULL DEFAULT '',
+    is_active       BOOLEAN NOT NULL DEFAULT true,
+    created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+DROP INDEX IF EXISTS idx_push_tokens_active; CREATE INDEX idx_push_tokens_active ON push_tokens(is_active);
+
 -- bounces
 DROP TABLE IF EXISTS bounces CASCADE;
 CREATE TABLE bounces (
