@@ -1,5 +1,9 @@
 # ---- Stage 1: build the Vue admin frontend (incl. email-builder) ----
 FROM node:20-bookworm AS frontend
+
+# Cypress ships as a devDependency but its binary is never needed to build.
+ENV CYPRESS_INSTALL_BINARY=0
+
 WORKDIR /build
 
 COPY frontend ./frontend
@@ -8,14 +12,18 @@ COPY frontend ./frontend
 WORKDIR /build/frontend/email-builder
 RUN corepack enable \
     && yarn install --no-immutable \
-    && yarn build
+    && yarn build \
+    && yarn cache clean \
+    && rm -rf node_modules
 
 # Main admin frontend (mirrors `make build-frontend`).
 WORKDIR /build/frontend
 RUN mkdir -p public/static/email-builder \
     && cp -r email-builder/dist/* public/static/email-builder/ \
     && yarn install --no-immutable \
-    && yarn build
+    && yarn build \
+    && yarn cache clean \
+    && rm -rf node_modules email-builder/node_modules
 
 # ---- Stage 2: build the Go backend and pack static assets into it ----
 FROM golang:1.27-bookworm AS backend
