@@ -14,8 +14,8 @@ body {
   color: #111;
 }
 a {
-  color: #0055d4;
-  text-decoration-color: #abcbfb;
+  color: #4F46E5;
+  text-decoration-color: #C7D2FE;
 }
 a:hover {
   color: #111;
@@ -44,7 +44,7 @@ input[type="text"], input[type="email"], input[type="password"], select {
   font-size: 1em;
 }
   input:focus {
-    border-color: #0055d4;
+    border-color: #4F46E5;
   }
 
 input:focus::placeholder {
@@ -68,7 +68,7 @@ input[disabled] {
   color: #FF5722;
 }
 .button {
-  background: #0055d4;
+  background: #4F46E5;
   padding: 15px 30px;
   border-radius: 3px;
   border: 0;
@@ -81,17 +81,17 @@ input[disabled] {
   text-align: center;
 }
 .button:hover {
-  background: #333;
+  background: #4338CA;
   color: #fff;
 }
 .button.button-outline {
   background: #fff;
-  border: 1px solid #0055d4;
-  color: #0055d4;
+  border: 1px solid #4F46E5;
+  color: #4F46E5;
 }
 .button.button-outline:hover {
-  border-color: #333;
-  background-color: #333;
+  border-color: #4338CA;
+  background-color: #4338CA;
   color: #fff;
 }
 

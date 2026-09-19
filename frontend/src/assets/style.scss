@@ -23,7 +23,9 @@ $body-family: "Inter", "Helvetica Neue", sans-serif;
 $body-size: 15px;
 $background: $white-bis;
 $body-background-color: $white-bis;
-$primary: #0055d4;
+$primary: #4F46E5;
+$secondary: #475569;
+$accent: #F59E0B;
 $green: #36995b;
 $turquoise: $green;
 $red: #FF5722;
@@ -37,6 +39,8 @@ $colors: map-merge($colors, (
     "green": ($green, $green-invert),
     "success": ($green, $green-invert),
     "danger": ($red, $green-invert),
+    "secondary": ($secondary, $white),
+    "accent": ($accent, $white),
 ));
 
 $sidebar-box-shadow: none;
@@ -249,7 +253,7 @@ section {
   }
   .menu-list {
     .router-link-exact-active {
-      border-right: 5px solid $primary;
+      border-right: 5px solid $accent;
       outline: 0 none;
     }
     li ul {

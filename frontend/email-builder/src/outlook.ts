@@ -322,7 +322,7 @@ function buildBulletproofButton(anchor: HTMLAnchorElement, wrapperStyle: string)
   const href = anchor.getAttribute('href') || '#';
   const target = anchor.getAttribute('target');
   const align = wrapperStyleMap['text-align'] || 'left';
-  const buttonColor = anchorStyleMap['background-color'] || '#0055d4';
+  const buttonColor = anchorStyleMap['background-color'] || '#4F46E5';
   const textColor = anchorStyleMap.color || '#ffffff';
   const fontSize = getPixelValue(anchorStyleMap['font-size']) || 16;
   const fontWeight = anchorStyleMap['font-weight'] || 'bold';
