@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/knadh/listmonk/internal/auth"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/auth"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 )
 

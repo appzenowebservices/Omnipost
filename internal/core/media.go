@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid/v5"
-	"github.com/knadh/listmonk/internal/media"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/media"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 	"gopkg.in/volatiletech/null.v6"
 )

@@ -1,24 +1,24 @@
 # 1. Contributing
 
 > [!IMPORTANT]
-> **June 2026**: Until the next major version v7.0.0 is released, it would not be possible to accept code contributions (PRs) that involve changes to the admin frontend/UI. The entire Vue/Buefy frontend is being removed completely in favour of a server-side-rendered admin UI that eliminates the Javascript-ecosystem lockin. listmonk admin UI will no longer be a Vue SPA (Single-page App) after v7. [Read more](https://github.com/knadh/listmonk/issues/3073).
+> **June 2026**: Until the next major version v7.0.0 is released, it would not be possible to accept code contributions (PRs) that involve changes to the admin frontend/UI. The entire Vue/Buefy frontend is being removed completely in favour of a server-side-rendered admin UI that eliminates the Javascript-ecosystem lockin. patra admin UI will no longer be a Vue SPA (Single-page App) after v7. [Read more](https://github.com/appzenowebservices/Omnipost/issues/3073).
 
-Welcome to listmonk! You can contribute to the project in the following ways:
+Welcome to patra! You can contribute to the project in the following ways:
 
 1. **Bug reports:** One liner reports are difficult to understand and review.
 	1. Follow the bug reporting issue template and provide clear, concise descriptions and steps to reproduce the bug.
 	2. Ensure that you have searched the existing issues to avoid duplicates.
-	3. Maintainers may close unclear issues that lack enough information to reproduce a bug. [Report a bug here](https://github.com/knadh/listmonk/issues/new?assignees=&labels=bug&template=bug_report.md).
+	3. Maintainers may close unclear issues that lack enough information to reproduce a bug. [Report a bug here](https://github.com/appzenowebservices/Omnipost/issues/new?assignees=&labels=bug&template=bug_report.md).
 
 2. **Feature suggestions:** If you feel there is a nice enhancement or feature that can benefit many users, please open a feature request issue.
 	1. Ensure that you have searched the existing issues to avoid duplicates.
 	2. What makes sense for the project, what suits its scope and goals, and its future direction are at the discretion of the maintainers who put in the time, effort, and energy in building and maintaining the project for free. Please be respectful of this and keep discussions friendly and fruitful.
 	3. It is the responsibility of the requester to clearly explain and justify why a change is warranted. It is not the responsibility of the maintainers to coax this information out of a requester. So, please post well researched, well thought out, and detailed feature requests saving everyone time.
-	4. Maintainers may close unclear feature requests that lack enough information. [Suggest a feature here](https://github.com/knadh/listmonk/issues/new?assignees=&labels=enhancement&template=feature-or-change-request.md&title=).
+	4. Maintainers may close unclear feature requests that lack enough information. [Suggest a feature here](https://github.com/appzenowebservices/Omnipost/issues/new?assignees=&labels=enhancement&template=feature-or-change-request.md&title=).
 
-3. **Improving docs:** You can submit corrections and improvements to the [documentation](https://listmonk.app/docs) website on the [docs repo](https://github.com/knadh/listmonk/tree/master/docs).
+3. **Improving docs:** You can submit corrections and improvements to the [documentation](https://github.com/appzenowebservices/Omnipost/docs) website on the [docs repo](https://github.com/appzenowebservices/Omnipost/tree/master/docs).
 
-4. **i18n translations:** The project is available in many languages thanks to user contributions. You can create a new language pack or submit corrections to existing ones. There is a UI available for making translations easy. [More info here](https://listmonk.app/docs/i18n/).
+4. **i18n translations:** The project is available in many languages thanks to user contributions. You can create a new language pack or submit corrections to existing ones. There is a UI available for making translations easy. [More info here](https://github.com/appzenowebservices/Omnipost/docs/i18n/).
 
 
 # 2. Pull requests

@@ -8,7 +8,7 @@
           <strong>Free and open source.</strong>
         </h3>
         <p class="center demo">
-          <a href="https://demo.listmonk.app" class="button">Live demo</a>
+          <a href="https://github.com/appzenowebservices/Omnipost" class="button">Live demo</a>
         </p>
       </div>
 
@@ -16,7 +16,7 @@
         <img class="s1" src="static/images/s1.webp" />
         <img class="s2" src="static/images/s2.webp" />
         <img class="s3" src="static/images/s3.webp" />
-        <img class="box" src="{{ .Site.BaseURL }}static/images/splash.webp" alt="listmonk screenshot" />
+        <img class="box" src="{{ .Site.BaseURL }}static/images/splash.webp" alt="patra screenshot" />
       </div>
   </div>
 </div>
@@ -49,10 +49,10 @@
           <p>Install</p>
           <ul class="install-steps">
             <li>
-              <code>./listmonk --new-config</code> to generate config.toml. Edit it.
+              <code>./patra --new-config</code> to generate config.toml. Edit it.
             </li>
-            <li><code>./listmonk --install</code> to setup the Postgres DB or <code>--upgrade</code> to upgrade an existing DB.</li>
-            <li>Run <code>./listmonk</code> and visit <code>http://localhost:9000</code></li>
+            <li><code>./patra --install</code> to setup the Postgres DB or <code>--upgrade</code> to upgrade an existing DB.</li>
+            <li>Run <code>./patra</code> and visit <code>http://localhost:9000</code></li>
           </ul>
           <p><a href="/docs/installation">Installation docs &rarr;</a></p>
         </div>
@@ -60,14 +60,14 @@
       <div class="col-6">
         <div class="box">
           <h3>Docker</h3>
-          <p><a href="https://hub.docker.com/r/listmonk/listmonk/tags?page=1&ordering=last_updated&name=latest"><code>listmonk/listmonk:latest</code></a></p>
+          <p><a href="https://hub.docker.com/r/patra/patra/tags?page=1&ordering=last_updated&name=latest"><code>patra/patra:latest</code></a></p>
           <p>
-            Download and use the sample <a href="https://github.com/knadh/listmonk/blob/master/docker-compose.yml">docker-compose.yml</a> 
+            Download and use the sample <a href="https://github.com/appzenowebservices/Omnipost/blob/master/docker-compose.yml">docker-compose.yml</a> 
           </p>
 
 <pre>
 # Download the compose file to the current directory.
-curl -LO https://github.com/knadh/listmonk/raw/master/docker-compose.yml
+curl -LO https://github.com/appzenowebservices/Omnipost/raw/master/docker-compose.yml
 
 # Run the services in the background.
 docker compose up -d
@@ -85,18 +85,18 @@ docker compose up -d
   <div class="container">
     <h2 class="center">Hosting providers</h2><br />
     <div>
-      <a href="https://www.nodion.com/en/deploy/listmonk/"><img src="static/images/host-nodion.svg" alt="Deploy to Nodion" style="max-height: 32px;" /></a>
-      <a href="https://www.kloudbean.com/listmonk-self-hosted"><img src="static/images/host-kloudbean.svg" alt="One-click deploy on Kloudbean" style="max-height: 32px;" /></a>
-      <a href="https://northflank.com/stacks/deploy-listmonk"><img src="static/images/host-northflank.webp" alt="One-click deploy on Northflank" style="height: 32px; width: 150px; border-radius: 6px; object-fit: contain;" /></a>
-      <a href="https://railway.app/new/template/listmonk"><img src="static/images/host-railway.svg" alt="One-click deploy on Railway" style="max-height: 32px;" /></a>
-      <a href="https://zenith.hosting/host/listmonk"><img src="static/images/host-zenith.svg" alt="Deploy with Zenith" style="max-height: 32px;" /></a>
-      <a href="https://www.pikapods.com/pods?run=listmonk"><img src="static/images/host-pikapods.svg" alt="Deploy on PikaPod" /></a>
-      <a href="https://elest.io/open-source/listmonk"><img height="33" src="static/images/host-elestio.webp" alt="Deploy on Elestio" /></a>
+      <a href="https://www.nodion.com/en/deploy/patra/"><img src="static/images/host-nodion.svg" alt="Deploy to Nodion" style="max-height: 32px;" /></a>
+      <a href="https://www.kloudbean.com/patra-self-hosted"><img src="static/images/host-kloudbean.svg" alt="One-click deploy on Kloudbean" style="max-height: 32px;" /></a>
+      <a href="https://northflank.com/stacks/deploy-patra"><img src="static/images/host-northflank.webp" alt="One-click deploy on Northflank" style="height: 32px; width: 150px; border-radius: 6px; object-fit: contain;" /></a>
+      <a href="https://railway.app/new/template/patra"><img src="static/images/host-railway.svg" alt="One-click deploy on Railway" style="max-height: 32px;" /></a>
+      <a href="https://zenith.hosting/host/patra"><img src="static/images/host-zenith.svg" alt="Deploy with Zenith" style="max-height: 32px;" /></a>
+      <a href="https://www.pikapods.com/pods?run=patra"><img src="static/images/host-pikapods.svg" alt="Deploy on PikaPod" /></a>
+      <a href="https://elest.io/open-source/patra"><img height="33" src="static/images/host-elestio.webp" alt="Deploy on Elestio" /></a>
       <a href="https://zeabur.com/templates/5EDMN6"><img width="148" src="static/images/host-zeabur.svg" alt="Deploy on Zeabur"/></a>
-      <a href="https://cloudzy.com/marketplace/listmonk/"><img src="static/images/host-cloudzy.svg" alt="Deploy to Cloudzy" style="max-height: 32px;" /></a>
-      <a href="https://lumadock.com/vps-hosting/listmonk"><img src="static/images/host-lumadock.svg" alt="Runs faster on LumaDock" style="max-height: 32px;" /></a>
+      <a href="https://cloudzy.com/marketplace/patra/"><img src="static/images/host-cloudzy.svg" alt="Deploy to Cloudzy" style="max-height: 32px;" /></a>
+      <a href="https://lumadock.com/vps-hosting/patra"><img src="static/images/host-lumadock.svg" alt="Runs faster on LumaDock" style="max-height: 32px;" /></a>
     </div>
-    <p class="disclaimer">*listmonk has no affiliation with these providers</p>
+    <p class="disclaimer">*patra has no affiliation with these providers</p>
   </div>
 </section>
 
@@ -157,7 +157,7 @@ docker compose up -d
         <img src="static/images/performance.webp" alt="Screenshot of performance metrics" />
 
         <figcaption style="font-size:">
-          A production listmonk instance sending a campaign of 7+ million e-mails.<br />
+          A production patra instance sending a campaign of 7+ million e-mails.<br />
           CPU usage is a fraction of a single core with peak RAM usage of 57 MB.
         </figcaption>
       </figure>
@@ -213,8 +213,8 @@ docker compose up -d
           <div class="box">
             <h2>Developers</h2>
             <p>
-              listmonk is free and open source software licensed under AGPLv3.
-              If you are interested in contributing, check out the <a href="https://github.com/knadh/listmonk">GitHub repository</a>
+              patra is free and open source software licensed under AGPLv3.
+              If you are interested in contributing, check out the <a href="https://github.com/appzenowebservices/Omnipost">GitHub repository</a>
               and refer to the <a href="/docs/developer-setup">developer setup</a>.
               The backend is written in Go and the frontend is Vue with Buefy for UI. 
             </p>

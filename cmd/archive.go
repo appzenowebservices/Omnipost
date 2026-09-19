@@ -8,8 +8,8 @@ import (
 	"net/url"
 
 	"github.com/gorilla/feeds"
-	"github.com/knadh/listmonk/internal/manager"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/manager"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 	null "gopkg.in/volatiletech/null.v6"
 )

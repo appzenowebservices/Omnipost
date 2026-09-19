@@ -4,11 +4,11 @@ module.exports = defineConfig({
   env: {
     apiUrl: 'http://localhost:9000',
     serverInitCmd:
-      'pkill -9 listmonk; cd ../ && LISTMONK_ADMIN_USER=admin LISTMONK_ADMIN_PASSWORD=listmonk ./listmonk --install --yes && setsid ./listmonk </dev/null >/dev/null 2>&1 &',
+      'pkill -9 patra; cd ../ && PATRA_ADMIN_USER=admin PATRA_ADMIN_PASSWORD=patra ./patra --install --yes && setsid ./patra </dev/null >/dev/null 2>&1 &',
     serverInitBlankCmd:
-      'pkill -9 listmonk; cd ../ && ./listmonk --install --yes && setsid ./listmonk </dev/null >/dev/null 2>&1 &',
-    LISTMONK_ADMIN_USER: 'admin',
-    LISTMONK_ADMIN_PASSWORD: 'listmonk',
+      'pkill -9 patra; cd ../ && ./patra --install --yes && setsid ./patra </dev/null >/dev/null 2>&1 &',
+    PATRA_ADMIN_USER: 'admin',
+    PATRA_ADMIN_PASSWORD: 'patra',
   },
   viewportWidth: 1400,
   viewportHeight: 950,

@@ -1,56 +1,56 @@
-# OmniPost runs against a managed Postgres (eg: Supabase) supplied via
-# OMNIPOST_DATABASE_URL in .env (see .env.sample). There is intentionally no
+# Patra runs against a managed Postgres (eg: Supabase) supplied via
+# PATRA_DATABASE_URL in .env (see .env.sample). There is intentionally no
 # local db service here.
 #
-# All LISTMONK_* env variables also support the LISTMONK_*_FILE pattern for loading secrets from files with Docker secrets and Podman
-# eg: LISTMONK_ADMIN_USER -> LISTMONK_ADMIN_USER_FILE=/path/to/file_with_value
+# All PATRA_* env variables also support the PATRA_*_FILE pattern for loading secrets from files with Docker secrets and Podman
+# eg: PATRA_ADMIN_USER -> PATRA_ADMIN_USER_FILE=/path/to/file_with_value
 
 services:
-  # omnipost app
+  # patra app
   app:
     build: .
-    container_name: omnipost_app
+    container_name: patra_app
     restart: unless-stopped
     ports:
       - "9000:9000"                                           # To change the externally exposed port, change to: $custom_port:9000
-    hostname: omnipost.example.com                            # Recommend using FQDN for hostname
-    command: [sh, -c, "./listmonk --install --idempotent --yes --config '' && ./listmonk --upgrade --yes --config '' && ./listmonk --config ''"]
-                                                              # --config (file) param is set to empty so that listmonk only uses the env vars (below) for config.
+    hostname: patra.example.com                            # Recommend using FQDN for hostname
+    command: [sh, -c, "./patra --install --idempotent --yes --config '' && ./patra --upgrade --yes --config '' && ./patra --config ''"]
+                                                              # --config (file) param is set to empty so that patra only uses the env vars (below) for config.
                                                               # --install --idempotent ensures that DB installation happens only once on an empty DB, on the first ever start.
                                                               # --upgrade automatically runs any DB migrations when a new image is pulled.
 
     env_file:
-      - .env                                                  # OmniPost: OMNIPOST_DATABASE_URL + OMNIPOST_SMTP_* live here (see .env.sample).
+      - .env                                                  # Patra: PATRA_DATABASE_URL + PATRA_SMTP_* live here (see .env.sample).
     environment:                                              # The same params as in config.toml are passed as env vars here.
-      LISTMONK_app__address: 0.0.0.0:9000
+      PATRA_app__address: 0.0.0.0:9000
       # Cloud DB URL (Supabase direct connection, port 5432 — NOT the 6543
       # transaction pooler, as the app uses prepared statements).
-      OMNIPOST_DATABASE_URL: "${OMNIPOST_DATABASE_URL:-}"
-      # Fallback split DB fields (used only when OMNIPOST_DATABASE_URL is empty).
-      LISTMONK_db__host: ${LISTMONK_db__host:-}
-      LISTMONK_db__port: ${LISTMONK_db__port:-}
-      LISTMONK_db__user: ${LISTMONK_db__user:-}
-      LISTMONK_db__password: "${LISTMONK_db__password:-}"
-      LISTMONK_db__database: ${LISTMONK_db__database:-}
-      LISTMONK_db__ssl_mode: ${LISTMONK_db__ssl_mode:-require}
-      LISTMONK_db__max_open: 25
-      LISTMONK_db__max_idle: 25
-      LISTMONK_db__max_lifetime: 300s
+      PATRA_DATABASE_URL: "${PATRA_DATABASE_URL:-}"
+      # Fallback split DB fields (used only when PATRA_DATABASE_URL is empty).
+      PATRA_db__host: ${PATRA_db__host:-}
+      PATRA_db__port: ${PATRA_db__port:-}
+      PATRA_db__user: ${PATRA_db__user:-}
+      PATRA_db__password: "${PATRA_db__password:-}"
+      PATRA_db__database: ${PATRA_db__database:-}
+      PATRA_db__ssl_mode: ${PATRA_db__ssl_mode:-require}
+      PATRA_db__max_open: 25
+      PATRA_db__max_idle: 25
+      PATRA_db__max_lifetime: 300s
       TZ: Etc/UTC
-      LISTMONK_ADMIN_USER: ${LISTMONK_ADMIN_USER:-}           # If these (optional) are set during the first `docker compose up`, then the Super Admin user is automatically created.
-      LISTMONK_ADMIN_PASSWORD: "${LISTMONK_ADMIN_PASSWORD:-}"   # Otherwise, the user can be setup on the web app after the first visit to http://localhost:9000
-      # OmniPost default e-mail channel (Hostinger preset). Empty = use DB / Settings UI.
-      OMNIPOST_SMTP_HOST: ${OMNIPOST_SMTP_HOST:-}
-      OMNIPOST_SMTP_PORT: ${OMNIPOST_SMTP_PORT:-}
-      OMNIPOST_SMTP_USERNAME: ${OMNIPOST_SMTP_USERNAME:-}
-      OMNIPOST_SMTP_PASSWORD: "${OMNIPOST_SMTP_PASSWORD:-}"
-      OMNIPOST_SMTP_AUTH: ${OMNIPOST_SMTP_AUTH:-}
-      OMNIPOST_SMTP_TLS: ${OMNIPOST_SMTP_TLS:-}
-      OMNIPOST_SMTP_NAME: ${OMNIPOST_SMTP_NAME:-}
-      OMNIPOST_FROM_EMAIL: ${OMNIPOST_FROM_EMAIL:-}
+      PATRA_ADMIN_USER: ${PATRA_ADMIN_USER:-}           # If these (optional) are set during the first `docker compose up`, then the Super Admin user is automatically created.
+      PATRA_ADMIN_PASSWORD: "${PATRA_ADMIN_PASSWORD:-}"   # Otherwise, the user can be setup on the web app after the first visit to http://localhost:9000
+      # Patra default e-mail channel (Hostinger preset). Empty = use DB / Settings UI.
+      PATRA_SMTP_HOST: ${PATRA_SMTP_HOST:-}
+      PATRA_SMTP_PORT: ${PATRA_SMTP_PORT:-}
+      PATRA_SMTP_USERNAME: ${PATRA_SMTP_USERNAME:-}
+      PATRA_SMTP_PASSWORD: "${PATRA_SMTP_PASSWORD:-}"
+      PATRA_SMTP_AUTH: ${PATRA_SMTP_AUTH:-}
+      PATRA_SMTP_TLS: ${PATRA_SMTP_TLS:-}
+      PATRA_SMTP_NAME: ${PATRA_SMTP_NAME:-}
+      PATRA_FROM_EMAIL: ${PATRA_FROM_EMAIL:-}
     volumes:
-      - ./uploads:/listmonk/uploads:rw                        # Mount an uploads directory on the host to /listmonk/uploads inside the container.
-                                                              # To use this, change directory path in Admin -> Settings -> Media to /listmonk/uploads
+      - ./uploads:/patra/uploads:rw                        # Mount an uploads directory on the host to /patra/uploads inside the container.
+                                                              # To use this, change directory path in Admin -> Settings -> Media to /patra/uploads
     networks:
       - web                                                   # Shared with Caddy (~/infra/caddy). Must exist: docker network ls | grep web
 

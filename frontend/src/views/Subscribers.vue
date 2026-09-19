@@ -44,7 +44,7 @@
                   data-cy="query" />
                 <span class="is-size-6 has-text-grey">
                   {{ $t('subscribers.advancedQueryHelp') }}.{{ ' ' }}
-                  <a href="https://listmonk.app/docs/querying-and-segmentation" target="_blank"
+                  <a href="https://github.com/appzenowebservices/Omnipost/docs/querying-and-segmentation" target="_blank"
                     rel="noopener noreferrer">
                     {{ $t('globals.buttons.learnMore') }}.
                   </a>

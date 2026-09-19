@@ -2,7 +2,7 @@
 
 A template is a re-usable HTML design that can be used across campaigns and transactional messages. Most commonly, templates have standard header and footer areas with logos and branding elements, where campaign content is inserted in the middle.
 
-listmonk supports [Go template](https://pkg.go.dev/text/template) expressions that lets you create powerful, dynamic HTML templates. It also integrates 100+ useful [Sprig template functions](https://masterminds.github.io/sprig/).
+patra supports [Go template](https://pkg.go.dev/text/template) expressions that lets you create powerful, dynamic HTML templates. It also integrates 100+ useful [Sprig template functions](https://masterminds.github.io/sprig/).
 
 !!! Warning
     Sprig template functions are powerful and Turing-complete, allowing programming of complex behaviour in templates. This means that it is also possible to program undesired behaviour, such as overloading memory on the host by concatenating large strings in a loop. Ensure that templating (campaigns, templates) permissions are given only to trusted users.
@@ -62,7 +62,7 @@ There are several template functions and expressions that can be used in campaig
 
 
 ### Sprig functions
-listmonk integrates the Sprig library that offers 100+ utility functions for working with strings, numbers, dates etc. that can be used in templating. Refer to the [Sprig documentation](https://masterminds.github.io/sprig/) for the full list of functions.
+patra integrates the Sprig library that offers 100+ utility functions for working with strings, numbers, dates etc. that can be used in templating. Refer to the [Sprig documentation](https://masterminds.github.io/sprig/) for the full list of functions.
 
 
 ### Example template
@@ -146,12 +146,12 @@ Here is a link for you to click that will be tracked.
 The above example uses an `if` condition to show one of two messages depending on the value of a subscriber attribute. Many such dynamic expressions are possible with Go templating expressions.
 
 ## System templates
-System templates are used for rendering public user-facing pages such as the subscription management page, and in automatically generated system e-mails such as the opt-in confirmation e-mail. These are bundled into listmonk but can be customized by copying the [static directory](https://github.com/knadh/listmonk/tree/master/static) locally, and passing its path to listmonk with the `./listmonk --static-dir=your/custom/path` flag.
+System templates are used for rendering public user-facing pages such as the subscription management page, and in automatically generated system e-mails such as the opt-in confirmation e-mail. These are bundled into patra but can be customized by copying the [static directory](https://github.com/appzenowebservices/Omnipost/tree/master/static) locally, and passing its path to patra with the `./patra --static-dir=your/custom/path` flag.
 
 You can fetch the static files with:<br>
-`mkdir -p /home/ubuntu/listmonk/static ; wget -O - https://github.com/knadh/listmonk/archive/master.tar.gz | tar xz -C /home/ubuntu/listmonk/static --strip=2 "listmonk-master/static"`
+`mkdir -p /home/ubuntu/patra/static ; wget -O - https://github.com/appzenowebservices/Omnipost/archive/master.tar.gz | tar xz -C /home/ubuntu/patra/static --strip=2 "Omnipost-master/static"`
 
-[Docker example](https://yasoob.me/posts/setting-up-listmonk-opensource-newsletter-mailing/#custom-static-files), [binary example](https://github.com/knadh/listmonk/blob/master/listmonk-simple.service).
+[Docker example](https://yasoob.me/posts/setting-up-patra-opensource-newsletter-mailing/#custom-static-files), [binary example](https://github.com/appzenowebservices/Omnipost/blob/master/patra-simple.service).
 
 
 ### Public pages
@@ -182,7 +182,7 @@ To edit the appearance of the public pages using CSS and Javascript, head to Set
 | `subscriber-data.html`           | E-mail that is sent to subscribers when they request a full dump of their private data.                                            |
 | `subscriber-optin.html`          | Automatic opt-in confirmation e-mail that is sent to an unconfirmed subscriber when they are added.                                |
 | `subscriber-optin-campaign.html` | E-mail content that's inserted into a campaign body when starting an opt-in campaign from the lists page.                          |
-| `default.tpl`                    | Default campaign template that is created in Campaigns -> Templates when listmonk is first installed. This is not used after that. |
+| `default.tpl`                    | Default campaign template that is created in Campaigns -> Templates when patra is first installed. This is not used after that. |
 
 !!! info
     To turn system e-mail templates to plaintext, remove `<!doctype html>` from base.html and remove all HTML tags from the templates while retaining the Go templating code.

@@ -87,7 +87,7 @@ import { colors, uris } from '../constants';
 import Media from '../views/Media.vue';
 import CodeEditor from './CodeEditor.vue';
 
-// Map of listmonk language codes to corresponding TinyMCE language files.
+// Map of patra language codes to corresponding TinyMCE language files.
 const LANGS = {
   cs: 'cs',
   de: 'de',

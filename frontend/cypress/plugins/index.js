@@ -10,10 +10,10 @@ module.exports = (on, config) => {
   const rootDir = path.resolve(__dirname, '..', '..', '..');
 
   on('task', {
-    // Kill listmonk, reset the DB, and start the server in the background.
+    // Kill patra, reset the DB, and start the server in the background.
     resetServer({ blank = false } = {}) {
       try {
-        execSync('pkill -9 listmonk', { stdio: 'ignore' });
+        execSync('pkill -9 patra', { stdio: 'ignore' });
       } catch (e) {
         // Do nothing.
       }
@@ -21,14 +21,14 @@ module.exports = (on, config) => {
       // Run install.
       const env = blank
         ? { ...process.env }
-        : { ...process.env, LISTMONK_ADMIN_USER: 'admin', LISTMONK_ADMIN_PASSWORD: 'listmonk' };
+        : { ...process.env, PATRA_ADMIN_USER: 'admin', PATRA_ADMIN_PASSWORD: 'patra' };
 
-      execSync('./listmonk --install --yes', { cwd: rootDir, env, stdio: 'ignore' });
+      execSync('./patra --install --yes', { cwd: rootDir, env, stdio: 'ignore' });
 
       // Replace the first SMTP block with local MailHog.
       const smtpSQL = "UPDATE settings SET value = (SELECT jsonb_agg(smtp || jsonb_build_object('host','localhost','port',1025,'tls_type','none')) FROM jsonb_array_elements(value) AS smtp) WHERE key = 'smtp';";
       try {
-        execSync('docker exec -i listmonk_db psql -U listmonk -d listmonk', {
+        execSync('docker exec -i patra_db psql -U patra -d patra', {
           input: smtpSQL,
           stdio: ['pipe', 'ignore', 'ignore'],
         });
@@ -37,7 +37,7 @@ module.exports = (on, config) => {
       }
 
       // Start the server.
-      const child = spawn('./listmonk', [], {
+      const child = spawn('./patra', [], {
         cwd: rootDir,
         detached: true,
         stdio: 'ignore',

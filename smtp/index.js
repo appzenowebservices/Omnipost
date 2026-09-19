@@ -1,4 +1,4 @@
-// OmniPost SMTP test sender (Hostinger preset by default).
+// Patra SMTP test sender (Hostinger preset by default).
 // Config comes from environment / smtp/.env — never hardcode credentials.
 //   cp .env.sample .env   (then fill in SMTP_USER / SMTP_PASS)
 //   npm install && node index.js
@@ -17,9 +17,9 @@ async function main() {
   const secure = env("SMTP_SECURE", port === 465 ? "true" : "false") === "true";
   const user = env("SMTP_USER", "");
   const pass = env("SMTP_PASS", "");
-  const from = env("SMTP_FROM", user ? `"OmniPost" <${user}>` : "");
+  const from = env("SMTP_FROM", user ? `"Patra" <${user}>` : "");
   const to = env("SMTP_TO", user);
-  const subject = env("SMTP_SUBJECT", "OmniPost SMTP test");
+  const subject = env("SMTP_SUBJECT", "Patra SMTP test");
 
   if (!user || !pass) {
     console.error("Missing SMTP_USER / SMTP_PASS. Copy smtp/.env.sample to smtp/.env and fill them in.");
@@ -46,10 +46,10 @@ async function main() {
     html: `
       <div style="font-family:Arial, sans-serif; text-align:center; padding:20px;">
         <h2 style="color:#222;">${subject}</h2>
-        <p>Sent via OmniPost (${host}).</p>
+        <p>Sent via Patra (${host}).</p>
       </div>
     `,
-    headers: { "X-Mailer": "OmniPost via Nodemailer" },
+    headers: { "X-Mailer": "Patra via Nodemailer" },
   });
 
   console.log("Email sent successfully:", info.messageId);

@@ -50,7 +50,7 @@
           {{ $t('settings.bounces.enableWebhooks') }}
         </b-switch>
         <p class="has-text-grey">
-          <a href="https://listmonk.app/docs/bounces" target="_blank" rel="noopener noreferer">{{
+          <a href="https://github.com/appzenowebservices/Omnipost/docs/bounces" target="_blank" rel="noopener noreferer">{{
             $t('globals.buttons.learnMore') }} &rarr;</a>
         </p>
       </b-field>

@@ -97,12 +97,12 @@
         <p>
             Transactional templates supports arbitrary parameters.
             Render them using <code>.Tx.Data.YourParamName</code>. For more information,
-            see the transactional mailing <a href="https://listmonk.app/docs/transactional">documentation</a>.
+            see the transactional mailing <a href="https://github.com/appzenowebservices/Omnipost/docs/transactional">documentation</a>.
         </p>
     </div>
     
     <div class="footer" style="text-align: center;font-size: 12px;color: #888;">
-        <p>{{ L.T "public.poweredBy" }} <a href="https://listmonk.app" target="_blank" rel="noreferrer" style="color: #888;">listmonk</a></p>
+        <p>{{ L.T "public.poweredBy" }} <a href="https://github.com/appzenowebservices/Omnipost" target="_blank" rel="noreferrer" style="color: #888;">Patra</a></p>
     </div>
 </body>
 </html>

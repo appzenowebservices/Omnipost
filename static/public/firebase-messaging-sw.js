@@ -1,4 +1,4 @@
-/* OmniPost web-push service worker (FCM).
+/* Patra web-push service worker (FCM).
  * Served from the SITE ROOT as /firebase-messaging-sw.js by the Go backend
  * (cmd/push.go), which injects the Firebase web config below from server
  * env at request time. Do not hardcode project keys here — the placeholders
@@ -30,7 +30,7 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-com
 
     // Background / closed-tab notifications.
     messaging.onBackgroundMessage(function onBackgroundMessage(payload) {
-      var title = 'OmniPost';
+      var title = 'Patra';
       var body = '';
       if (payload && payload.notification) {
         if (payload.notification.title) {

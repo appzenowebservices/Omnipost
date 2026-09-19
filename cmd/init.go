@@ -34,21 +34,21 @@ import (
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
-	"github.com/knadh/listmonk/internal/auth"
-	"github.com/knadh/listmonk/internal/bounce"
-	"github.com/knadh/listmonk/internal/bounce/mailbox"
-	"github.com/knadh/listmonk/internal/captcha"
-	"github.com/knadh/listmonk/internal/core"
-	"github.com/knadh/listmonk/internal/i18n"
-	"github.com/knadh/listmonk/internal/manager"
-	"github.com/knadh/listmonk/internal/media"
-	"github.com/knadh/listmonk/internal/media/providers/filesystem"
-	"github.com/knadh/listmonk/internal/media/providers/s3"
-	"github.com/knadh/listmonk/internal/messenger/email"
-	"github.com/knadh/listmonk/internal/messenger/postback"
-	"github.com/knadh/listmonk/internal/notifs"
-	"github.com/knadh/listmonk/internal/subimporter"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/auth"
+	"github.com/appzenowebservices/patra/internal/bounce"
+	"github.com/appzenowebservices/patra/internal/bounce/mailbox"
+	"github.com/appzenowebservices/patra/internal/captcha"
+	"github.com/appzenowebservices/patra/internal/core"
+	"github.com/appzenowebservices/patra/internal/i18n"
+	"github.com/appzenowebservices/patra/internal/manager"
+	"github.com/appzenowebservices/patra/internal/media"
+	"github.com/appzenowebservices/patra/internal/media/providers/filesystem"
+	"github.com/appzenowebservices/patra/internal/media/providers/s3"
+	"github.com/appzenowebservices/patra/internal/messenger/email"
+	"github.com/appzenowebservices/patra/internal/messenger/postback"
+	"github.com/appzenowebservices/patra/internal/notifs"
+	"github.com/appzenowebservices/patra/internal/subimporter"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/knadh/stuffbin"
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
@@ -328,12 +328,12 @@ func initDB() *sqlx.DB {
 		lo.Fatalf("error loading db config: %v", err)
 	}
 
-	// OmniPost: a full Postgres URL (eg: Supabase) may be supplied verbatim.
+	// Patra: a full Postgres URL (eg: Supabase) may be supplied verbatim.
 	// It takes precedence over the split db.* fields. Use the direct
 	// connection (Supabase port 5432), not the transaction pooler (6543),
 	// as the app relies on prepared statements.
-	if dsn := firstEnv("OMNIPOST_DATABASE_URL", "DATABASE_URL"); dsn != "" {
-		lo.Printf("connecting to db via OMNIPOST_DATABASE_URL")
+	if dsn := firstEnv("PATRA_DATABASE_URL", "DATABASE_URL"); dsn != "" {
+		lo.Printf("connecting to db via PATRA_DATABASE_URL")
 		db, err := sqlx.Connect("postgres", dsn)
 		if err != nil {
 			lo.Fatalf("error connecting to DB: %v", err)

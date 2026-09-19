@@ -399,7 +399,7 @@
     "settings.bounces.action": "Művelet",
     "settings.bounces.azureSharedSecret": "Azure Event Grid megosztott titok",
     "settings.bounces.azureSharedSecretHeader": "Azure megosztott titkos fejléc neve",
-    "settings.bounces.azureSharedSecretHeaderHelp": "Opcionális HTTP fejlécnév, amelyből az Azure megosztott titkot olvassa. Ha üres, a listmonk a X-Listmonk-Webhook-Secret-et használja.",
+    "settings.bounces.azureSharedSecretHeaderHelp": "Opcionális HTTP fejlécnév, amelyből az Azure megosztott titkot olvassa. Ha üres, a patra a X-Patra-Webhook-Secret-et használja.",
     "settings.bounces.azureSharedSecretHelp": "Adja meg az Azure Event Grid webhook végponthoz konfigurált megosztott titkot.",
     "settings.bounces.blocklist": "Tiltás",
     "settings.bounces.count": "Visszapattanások száma",

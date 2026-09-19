@@ -19,10 +19,10 @@ import (
 	koanfjson "github.com/knadh/koanf/parsers/json"
 	"github.com/knadh/koanf/providers/rawbytes"
 	"github.com/knadh/koanf/v2"
-	"github.com/knadh/listmonk/internal/auth"
-	"github.com/knadh/listmonk/internal/messenger/email"
-	"github.com/knadh/listmonk/internal/notifs"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/auth"
+	"github.com/appzenowebservices/patra/internal/messenger/email"
+	"github.com/appzenowebservices/patra/internal/notifs"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 )
 

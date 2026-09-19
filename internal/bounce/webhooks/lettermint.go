@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/models"
 )
 
 type lettermintNotif struct {
@@ -95,7 +95,7 @@ func (l *Lettermint) ProcessBounce(sig string, body []byte) ([]models.Bounce, er
 	if len(n.Data.Metadata) > 0 {
 		var meta map[string]string
 		if err := json.Unmarshal(n.Data.Metadata, &meta); err == nil {
-			if v, ok := meta["X-Listmonk-Campaign"]; ok {
+			if v, ok := meta["X-Patra-Campaign"]; ok {
 				campUUID = v
 			}
 		}

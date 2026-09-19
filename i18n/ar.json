@@ -399,7 +399,7 @@
     "settings.bounces.action": "الإجراء",
     "settings.bounces.azureSharedSecret": "Azure Event Grid Shared Secret",
     "settings.bounces.azureSharedSecretHeader": "اسم رأس Azure Shared Secret",
-    "settings.bounces.azureSharedSecretHeaderHelp": "اسم رأس HTTP اختياري لقراءة السر المشترك الخاص بـ Azure. إذا كان فارغًا، يستخدم listmonk X-Listmonk-Webhook-Secret.",
+    "settings.bounces.azureSharedSecretHeaderHelp": "اسم رأس HTTP اختياري لقراءة السر المشترك الخاص بـ Azure. إذا كان فارغًا، يستخدم patra X-Patra-Webhook-Secret.",
     "settings.bounces.azureSharedSecretHelp": "قدم السر المشترك المهيأ لنقطة نهاية webhook الخاصة بـ Azure Event Grid.",
     "settings.bounces.blocklist": "قائمة الحظر",
     "settings.bounces.count": "عدد الارتدادات",

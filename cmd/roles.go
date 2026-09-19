@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/knadh/listmonk/internal/auth"
+	"github.com/appzenowebservices/patra/internal/auth"
 	"github.com/labstack/echo/v4"
 )
 

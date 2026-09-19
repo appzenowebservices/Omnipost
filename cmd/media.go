@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/disintegration/imaging"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 )
 

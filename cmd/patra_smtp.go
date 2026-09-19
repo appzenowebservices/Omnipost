@@ -11,35 +11,35 @@ import (
 	"github.com/knadh/koanf/v2"
 )
 
-// OmniPost default e-mail provider preset (Hostinger).
+// Patra default e-mail provider preset (Hostinger).
 //
 // The app's SMTP settings live in the DB (settings key 'smtp', seeded from
-// schema.sql). For SaaS-style deploys, setting OMNIPOST_SMTP_* env vars
+// schema.sql). For SaaS-style deploys, setting PATRA_SMTP_* env vars
 // overrides the DB-backed SMTP config at startup with a single enabled
 // Hostinger server, so fresh deploys send mail without manual UI setup.
 //
-// Supported vars (OMNIPOST_ takes precedence, LISTMONK_ accepted as alias):
+// Supported vars (all optional; unset = use DB / Settings UI):
 //
-//	OMNIPOST_SMTP_HOST      default smtp.hostinger.com (when any SMTP env is set)
-//	OMNIPOST_SMTP_PORT      default 465
-//	OMNIPOST_SMTP_USERNAME  e.g. contact@appzenowebservices.com
-//	OMNIPOST_SMTP_PASSWORD  SMTP password / API secret (never commit)
-//	OMNIPOST_SMTP_AUTH      default login (login|plain|cram|none)
-//	OMNIPOST_SMTP_TLS       default TLS (TLS|STARTTLS|none)
-//	OMNIPOST_SMTP_NAME      default email-omnipost
-//	OMNIPOST_FROM_EMAIL     e.g. OmniPost <contact@appzenowebservices.com>
+//	PATRA_SMTP_HOST      default smtp.hostinger.com (when any SMTP env is set)
+//	PATRA_SMTP_PORT      default 465
+//	PATRA_SMTP_USERNAME  e.g. contact@appzenowebservices.com
+//	PATRA_SMTP_PASSWORD  SMTP password / API secret (never commit)
+//	PATRA_SMTP_AUTH      default login (login|plain|cram|none)
+//	PATRA_SMTP_TLS       default TLS (TLS|STARTTLS|none)
+//	PATRA_SMTP_NAME      default email-patra
+//	PATRA_FROM_EMAIL     e.g. Patra <contact@appzenowebservices.com>
 //
 // If none of HOST/PASSWORD/FROM_EMAIL are set, this is a no-op and the DB
 // (schema.sql defaults + Settings UI) remains the source of truth.
-func applyOmniPostSMTPEnv(ko *koanf.Koanf, db *sqlx.DB) {
-	host := firstEnv("OMNIPOST_SMTP_HOST", "LISTMONK_SMTP_HOST")
-	portStr := firstEnv("OMNIPOST_SMTP_PORT", "LISTMONK_SMTP_PORT")
-	username := firstEnv("OMNIPOST_SMTP_USERNAME", "LISTMONK_SMTP_USERNAME")
-	password := firstEnv("OMNIPOST_SMTP_PASSWORD", "LISTMONK_SMTP_PASSWORD")
-	auth := firstEnv("OMNIPOST_SMTP_AUTH", "LISTMONK_SMTP_AUTH")
-	tls := firstEnv("OMNIPOST_SMTP_TLS", "LISTMONK_SMTP_TLS")
-	name := firstEnv("OMNIPOST_SMTP_NAME", "LISTMONK_SMTP_NAME")
-	fromEmail := firstEnv("OMNIPOST_FROM_EMAIL", "LISTMONK_FROM_EMAIL", "OMNIPOST_SMTP_FROM")
+func applyPatraSMTPEnv(ko *koanf.Koanf, db *sqlx.DB) {
+	host := firstEnv("PATRA_SMTP_HOST")
+	portStr := firstEnv("PATRA_SMTP_PORT")
+	username := firstEnv("PATRA_SMTP_USERNAME")
+	password := firstEnv("PATRA_SMTP_PASSWORD")
+	auth := firstEnv("PATRA_SMTP_AUTH")
+	tls := firstEnv("PATRA_SMTP_TLS")
+	name := firstEnv("PATRA_SMTP_NAME")
+	fromEmail := firstEnv("PATRA_FROM_EMAIL", "PATRA_SMTP_FROM")
 
 	if host == "" && password == "" && username == "" && fromEmail == "" {
 		return
@@ -61,7 +61,7 @@ func applyOmniPostSMTPEnv(ko *koanf.Koanf, db *sqlx.DB) {
 		tls = "TLS"
 	}
 	if name == "" {
-		name = "email-omnipost"
+		name = "email-patra"
 	}
 
 	// Reuse the existing SMTP UUID (if any) so password-UUID matching in
@@ -96,7 +96,7 @@ func applyOmniPostSMTPEnv(ko *koanf.Koanf, db *sqlx.DB) {
 	}
 
 	ko.Set("smtp", []map[string]any{server})
-	lo.Printf("OmniPost SMTP preset active: %s:%d (user %s)", host, port, username)
+	lo.Printf("Patra SMTP preset active: %s:%d (user %s)", host, port, username)
 
 	if fromEmail != "" {
 		ko.Set("app.from_email", fromEmail)
@@ -109,13 +109,13 @@ func applyOmniPostSMTPEnv(ko *koanf.Koanf, db *sqlx.DB) {
 	}
 	if b, err := json.Marshal([]map[string]any{server}); err == nil {
 		if _, err := db.Exec(`UPDATE settings SET value = $1::JSONB, updated_at = NOW() WHERE key = 'smtp'`, string(b)); err != nil {
-			lo.Printf("warning: could not persist OMNIPOST_SMTP_* to settings table: %v", err)
+			lo.Printf("warning: could not persist PATRA_SMTP_* to settings table: %v", err)
 		}
 	}
 	if fromEmail != "" {
 		if b, err := json.Marshal(fromEmail); err == nil {
 			if _, err := db.Exec(`UPDATE settings SET value = $1::JSONB, updated_at = NOW() WHERE key = 'app.from_email'`, string(b)); err != nil {
-				lo.Printf("warning: could not persist OMNIPOST_FROM_EMAIL to settings table: %v", err)
+				lo.Printf("warning: could not persist PATRA_FROM_EMAIL to settings table: %v", err)
 			}
 		}
 	}

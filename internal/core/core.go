@@ -13,8 +13,8 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/knadh/listmonk/internal/i18n"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/i18n"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
 )
@@ -28,7 +28,7 @@ const (
 	matListSubStats    = "mat_list_subscriber_stats"
 )
 
-// Core represents the listmonk core with all shared, global functions.
+// Core represents the patra core with all shared, global functions.
 type Core struct {
 	h *Hooks
 

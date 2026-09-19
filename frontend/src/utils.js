@@ -12,7 +12,7 @@ dayjs.extend(relativeTime);
 dayjs.extend(dayDuration);
 
 const reEmail = /(.+?)@(.+?)/ig;
-const prefKey = 'listmonk_pref';
+const prefKey = 'patra_pref';
 
 const htmlEntities = {
   '&': '&amp;',

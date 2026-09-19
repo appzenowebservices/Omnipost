@@ -9,8 +9,8 @@ import (
 	"net/textproto"
 	"strings"
 
-	"github.com/knadh/listmonk/internal/utils"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/utils"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/knadh/smtppool/v2"
 )
 

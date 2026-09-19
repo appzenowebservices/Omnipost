@@ -1,47 +1,37 @@
-<a href="https://zerodha.tech"><img src="https://zerodha.tech/static/images/github-badge.svg" align="right" /></a>
+# Patra
 
-[![listmonk-logo](https://user-images.githubusercontent.com/547147/231084896-835dba66-2dfe-497c-ba0f-787564c0819e.png)](https://listmonk.app)
+Patra is a self-hosted newsletter, mailing list, and multi-channel posting manager (e-mail + web-push), packed into a single binary with a PostgreSQL database as its data store.
 
-listmonk is a standalone, self-hosted, newsletter and mailing list manager. It is fast, feature-rich, and packed into a single binary. It uses a PostgreSQL database as its data store.
+## Run with Docker (recommended)
 
-[![listmonk-dashboard](https://github.com/user-attachments/assets/689b5fbb-dd25-4956-a36f-e3226a65f9c4)](https://listmonk.app)
-
-Visit [listmonk.app](https://listmonk.app) for more info. Check out the [**live demo**](https://demo.listmonk.app).
-
-## Installation
-
-### Docker
-
-The latest image is available on DockerHub at [`listmonk/listmonk:latest`](https://hub.docker.com/r/listmonk/listmonk/tags?page=1&ordering=last_updated&name=latest).
-Download and use the sample [docker-compose.yml](https://github.com/knadh/listmonk/blob/master/docker-compose.yml).
-
+The image builds itself from this repo — no local database needed. Postgres runs managed (eg: Supabase) via `PATRA_DATABASE_URL`.
 
 ```shell
-# Download the compose file to the current directory.
-curl -LO https://github.com/knadh/listmonk/raw/master/docker-compose.yml
-
-# Run the services in the background.
-docker compose up -d
+cp .env.sample .env   # fill in PATRA_DATABASE_URL and mail/push keys. Never commit .env.
+docker compose up --build -d
+docker compose logs -f app
 ```
-Visit `http://localhost:9000`
 
-See [installation docs](https://listmonk.app/docs/installation)
+Visit `http://localhost:9000` (or your domain) and create the admin user on first visit. To create it up front instead: `PATRA_ADMIN_USER=... PATRA_ADMIN_PASSWORD=... docker compose up --build -d`.
 
-__________________
+Use the **direct** Postgres connection (port 5432), not a transaction pooler: `postgresql://postgres:PASSWORD@db.<ref>.supabase.co:5432/postgres?sslmode=require`.
 
-### Binary
-- Download the [latest release](https://github.com/knadh/listmonk/releases) and extract the listmonk binary.
-- `./listmonk --new-config` to generate config.toml. Edit it.
-- `./listmonk --install` to setup the Postgres DB (or `--upgrade` to upgrade an existing DB. Upgrades are idempotent and running them multiple times have no side effects).
-- Run `./listmonk` and visit `http://localhost:9000`
+## Binary
 
-See [installation docs](https://listmonk.app/docs/installation)
-__________________
+- `go build -o patra ./cmd` (Go 1.26+), plus `make build-frontend` and `make pack-bin` to bundle the admin UI.
+- `./patra --new-config` to generate config.toml. Edit it.
+- `./patra --install` to setup the Postgres DB (or `--upgrade` for an existing DB; upgrades are idempotent).
+- Run `./patra` and visit `http://localhost:9000`.
 
+## Channels
+
+- **E-mail** — set `PATRA_SMTP_*` in `.env` (Hostinger preset by default) or configure servers in Settings → SMTP.
+- **Web-push (FCM)** — set `FIREBASE_VAPID_KEY`, `FIREBASE_WEB_*`, and `FIREBASE_SERVICE_ACCOUNT_KEY` in `.env`, then open the Push Notifications page in the admin to register browsers and send tests.
 
 ## Developers
-listmonk is free and open source software licensed under AGPLv3. If you are interested in contributing, refer to the [developer setup](https://listmonk.app/docs/developer-setup). The backend is written in Go and the frontend is Vue with Buefy for UI. 
 
+The backend is Go, the frontend is Vue 2 + Buefy. `make run` (backend) and `make run-frontend` for dev mode.
 
 ## License
-listmonk is licensed under the AGPL v3 license.
+
+Licensed under the AGPL v3 license. See LICENSE.

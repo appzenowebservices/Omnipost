@@ -227,10 +227,10 @@ CREATE TABLE settings (
 );
 DROP INDEX IF EXISTS idx_settings_key; CREATE INDEX idx_settings_key ON settings(key);
 INSERT INTO settings (key, value) VALUES
-    ('app.site_name', '"OmniPost"'),
+    ('app.site_name', '"Patra"'),
     ('app.root_url', '"http://localhost:9000"'),
     ('app.favicon_url', '""'),
-    ('app.from_email', '"OmniPost <contact@appzenowebservices.com>"'),
+    ('app.from_email', '"Patra <contact@appzenowebservices.com>"'),
     ('app.logo_url', '""'),
     ('app.concurrency', '10'),
     ('app.message_rate', '10'),
@@ -246,7 +246,7 @@ INSERT INTO settings (key, value) VALUES
     ('app.show_optin_page', 'true'),
     ('app.enable_public_archive_rss_content', 'true'),
     ('app.send_optin_confirmation', 'true'),
-    ('app.check_updates', 'true'),
+    ('app.check_updates', 'false'),
     ('app.notify_emails', '[]'),
     ('app.lang', '"en"'),
     ('privacy.individual_tracking', 'false'),
@@ -279,9 +279,9 @@ INSERT INTO settings (key, value) VALUES
     ('upload.s3.bucket_type', '"public"'),
     ('upload.s3.expiry', '"167h"'),
     ('smtp',
-        -- OmniPost default provider preset: Hostinger. Password is a placeholder;
-        -- set the real one via OMNIPOST_SMTP_PASSWORD env (see .env.sample) or the Settings UI.
-        '[{"name":"email-omnipost","enabled":true, "host":"smtp.hostinger.com","port":465,"auth_protocol":"login","username":"contact@appzenowebservices.com","password":"changeme","hello_hostname":"","max_conns":10,"idle_timeout":"15s","wait_timeout":"5s","max_msg_retries":2,"msg_retry_delay":"10ms","tls_type":"TLS","tls_skip_verify":false,"email_headers":[], "from_addresses":[]},
+        -- Patra default provider preset: Hostinger. Password is a placeholder;
+        -- set the real one via PATRA_SMTP_PASSWORD env (see .env.sample) or the Settings UI.
+        '[{"name":"email-patra","enabled":true, "host":"smtp.hostinger.com","port":465,"auth_protocol":"login","username":"contact@appzenowebservices.com","password":"changeme","hello_hostname":"","max_conns":10,"idle_timeout":"15s","wait_timeout":"5s","max_msg_retries":2,"msg_retry_delay":"10ms","tls_type":"TLS","tls_skip_verify":false,"email_headers":[], "from_addresses":[]},
           {"enabled":false, "host":"smtp.gmail.com","port":465,"auth_protocol":"login","username":"username@gmail.com","password":"password","hello_hostname":"","max_conns":10,"idle_timeout":"15s","wait_timeout":"5s","max_msg_retries":2,"msg_retry_delay":"10ms","tls_type":"TLS","tls_skip_verify":false,"email_headers":[], "from_addresses":[]}]'),
     ('messengers', '[]'),
     ('bounce.enabled', 'false'),
@@ -295,7 +295,7 @@ INSERT INTO settings (key, value) VALUES
     ('bounce.forwardemail', '{"enabled": false, "key": ""}'),
     ('bounce.lettermint', '{"enabled": false, "key": ""}'),
     ('bounce.mailboxes',
-        '[{"enabled":false, "type": "pop", "host":"pop.yoursite.com","port":995,"auth_protocol":"userpass","username":"username","password":"password","return_path": "bounce@listmonk.yoursite.com","scan_interval":"15m","tls_enabled":true,"tls_skip_verify":false}]'),
+        '[{"enabled":false, "type": "pop", "host":"pop.yoursite.com","port":995,"auth_protocol":"userpass","username":"username","password":"password","return_path": "bounce@patra.yoursite.com","scan_interval":"15m","tls_enabled":true,"tls_skip_verify":false}]'),
     ('appearance.admin.custom_css', '""'),
     ('appearance.admin.custom_js', '""'),
     ('appearance.public.custom_css', '""'),

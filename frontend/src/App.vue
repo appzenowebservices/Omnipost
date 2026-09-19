@@ -96,7 +96,7 @@
             before removing them. Visit
             <router-link :to="{ name: 'users' }">
               Admin -> Settings -> Users
-            </router-link> dashboard. <a href="https://listmonk.app/docs/upgrade/#upgrading-to-v4xx" target="_blank"
+            </router-link> dashboard. <a href="https://github.com/appzenowebservices/Omnipost/docs/upgrade/#upgrading-to-v4xx" target="_blank"
               rel="noopener noreferer">Learn more.</a>
           </div>
         </div>

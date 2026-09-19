@@ -10,11 +10,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/knadh/listmonk/internal/auth"
-	"github.com/knadh/listmonk/internal/i18n"
-	"github.com/knadh/listmonk/internal/notifs"
-	"github.com/knadh/listmonk/internal/subimporter"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/auth"
+	"github.com/appzenowebservices/patra/internal/i18n"
+	"github.com/appzenowebservices/patra/internal/notifs"
+	"github.com/appzenowebservices/patra/internal/subimporter"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
 )
@@ -48,7 +48,7 @@ type subOptin struct {
 
 var (
 	dummySubscriber = models.Subscriber{
-		Email:   "demo@listmonk.app",
+		Email:   "demo@example.com",
 		Name:    "Demo Subscriber",
 		UUID:    dummyUUID,
 		Attribs: models.JSON{"city": "Bengaluru"},

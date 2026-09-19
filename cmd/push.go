@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid/v5"
-	"github.com/knadh/listmonk/internal/push"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/push"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -26,14 +26,14 @@ type firebaseWebConfig struct {
 // project from server env so the JS client, the service worker, and the Go
 // FCM sender can never disagree about which Firebase project to use.
 func getFirebaseWebConfig() firebaseWebConfig {
-	projectID := firstEnv("FIREBASE_PROJECT_ID", "OMNIPOST_FIREBASE_PROJECT_ID")
+	projectID := firstEnv("FIREBASE_PROJECT_ID", "PATRA_FIREBASE_PROJECT_ID")
 	return firebaseWebConfig{
-		APIKey:            firstEnv("FIREBASE_WEB_API_KEY", "OMNIPOST_FIREBASE_WEB_API_KEY"),
-		AuthDomain:        firstEnv("FIREBASE_WEB_AUTH_DOMAIN", "OMNIPOST_FIREBASE_WEB_AUTH_DOMAIN"),
+		APIKey:            firstEnv("FIREBASE_WEB_API_KEY", "PATRA_FIREBASE_WEB_API_KEY"),
+		AuthDomain:        firstEnv("FIREBASE_WEB_AUTH_DOMAIN", "PATRA_FIREBASE_WEB_AUTH_DOMAIN"),
 		ProjectID:         projectID,
-		MessagingSenderID: firstEnv("FIREBASE_WEB_SENDER_ID", "OMNIPOST_FIREBASE_WEB_SENDER_ID"),
-		AppID:             firstEnv("FIREBASE_WEB_APP_ID", "OMNIPOST_FIREBASE_WEB_APP_ID"),
-		VAPIDKey:          firstEnv("FIREBASE_VAPID_KEY", "OMNIPOST_FIREBASE_VAPID_KEY"),
+		MessagingSenderID: firstEnv("FIREBASE_WEB_SENDER_ID", "PATRA_FIREBASE_WEB_SENDER_ID"),
+		AppID:             firstEnv("FIREBASE_WEB_APP_ID", "PATRA_FIREBASE_WEB_APP_ID"),
+		VAPIDKey:          firstEnv("FIREBASE_VAPID_KEY", "PATRA_FIREBASE_VAPID_KEY"),
 	}
 }
 
@@ -131,7 +131,7 @@ func (a *App) SendTestPush(c echo.Context) error {
 	req.Title = strings.TrimSpace(req.Title)
 	req.Body = strings.TrimSpace(req.Body)
 	if req.Title == "" {
-		req.Title = "OmniPost test"
+		req.Title = "Patra test"
 	}
 	if req.Body == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "notification body is required")

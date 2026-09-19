@@ -96,7 +96,7 @@
                 <b-checkbox v-model="form.permissions" :native-value="p" :disabled="disabled">
                   {{ p }}
                   <a v-if="p === 'subscribers:sql_query'"
-                    href="https://listmonk.app/docs/roles-and-permissions/#subscriberssql_query" target="_blank"
+                    href="https://github.com/appzenowebservices/Omnipost/docs/roles-and-permissions/#subscriberssql_query" target="_blank"
                     rel="noopener noreferrer" aria-label="Warning: high risk permission">
                     <b-icon icon="warning-empty" type="is-danger" size="is-small" />
                   </a>
@@ -105,7 +105,7 @@
             </b-table-column>
           </b-table>
         </template>
-        <a href="https://listmonk.app/docs/roles-and-permissions" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/appzenowebservices/Omnipost/docs/roles-and-permissions" target="_blank" rel="noopener noreferrer">
           <b-icon icon="link-variant" /> {{ $t('globals.buttons.learnMore') }}
         </a>
       </section>

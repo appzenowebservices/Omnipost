@@ -61,10 +61,10 @@
       <h2 class="title is-6">Send a test</h2>
       <form @submit.prevent="sendTest">
         <b-field label="Title" label-position="on-border">
-          <b-input v-model="form.title" placeholder="OmniPost test" maxlength="200" />
+          <b-input v-model="form.title" placeholder="Patra test" maxlength="200" />
         </b-field>
         <b-field label="Body" label-position="on-border">
-          <b-input v-model="form.body" type="textarea" placeholder="Hello from OmniPost" maxlength="2000" />
+          <b-input v-model="form.body" type="textarea" placeholder="Hello from Patra" maxlength="2000" />
         </b-field>
         <b-field>
           <b-checkbox v-model="form.onlyThisBrowser">
@@ -132,8 +132,8 @@ export default Vue.extend({
       sendResult: null,
       foregroundNote: '',
       form: {
-        title: 'OmniPost test',
-        body: 'Hello from OmniPost',
+        title: 'Patra test',
+        body: 'Hello from Patra',
         onlyThisBrowser: true,
       },
       status: {

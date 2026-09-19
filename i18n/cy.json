@@ -399,7 +399,7 @@
     "settings.bounces.action": "Gweithred",
     "settings.bounces.azureSharedSecret": "Cyfrinach Wedi'i Rhannu Azure Event Grid",
     "settings.bounces.azureSharedSecretHeader": "Enw Pennawd Cyfrinach Wedi'i Rhannu Azure",
-    "settings.bounces.azureSharedSecretHeaderHelp": "Enw pennawd HTTP dewisol i ddarllen y cyfrinach a rennir Azure. Os yw'n wag, mae listmonk yn defnyddio X-Listmonk-Webhook-Secret.",
+    "settings.bounces.azureSharedSecretHeaderHelp": "Enw pennawd HTTP dewisol i ddarllen y cyfrinach a rennir Azure. Os yw'n wag, mae patra yn defnyddio X-Patra-Webhook-Secret.",
     "settings.bounces.azureSharedSecretHelp": "Darparwch y cyfrinach wedi'i rhannu a ffurfiwyd ar gyfer diweddpwynt webhook Azure Event Grid eich chi.",
     "settings.bounces.blocklist": "Rhestr rwystro",
     "settings.bounces.count": "Nifer y pethau sydd wedi sboncio'n ôl",

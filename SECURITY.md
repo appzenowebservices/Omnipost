@@ -1,4 +1,3 @@
 # Reporting security issues
 
-Please refer to https://listmonk.app/docs/security-reports/ first to see the list of non-issues and acceptable-risks before reporting a vulnerability.
-
+Please report vulnerabilities via GitHub [security advisories](https://github.com/appzenowebservices/Omnipost/security/advisories).

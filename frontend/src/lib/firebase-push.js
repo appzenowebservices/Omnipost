@@ -1,4 +1,4 @@
-// OmniPost web-push client (FCM).
+// Patra web-push client (FCM).
 // The Firebase web config comes from the server at runtime
 // (GET /api/public/firebase-config), so the JS client, the service worker,
 // and the Go FCM sender always use the same Firebase project —

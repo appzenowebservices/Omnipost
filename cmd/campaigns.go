@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/knadh/listmonk/internal/auth"
-	"github.com/knadh/listmonk/internal/notifs"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/auth"
+	"github.com/appzenowebservices/patra/internal/notifs"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
 	"gopkg.in/volatiletech/null.v6"

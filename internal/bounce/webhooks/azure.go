@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/models"
 )
 
 var reSMTPStatus = regexp.MustCompile(`\b([245]\.\d\.\d)\b`)
@@ -140,7 +140,7 @@ func (a *Azure) ProcessBounce(req *http.Request, b []byte) ([]models.Bounce, err
 
 func (a *Azure) verifyAuth(req *http.Request) error {
 	const (
-		defaultSecretHeader = "X-Listmonk-Webhook-Secret"
+		defaultSecretHeader = "X-Patra-Webhook-Secret"
 		querySecretParam    = "code"
 	)
 

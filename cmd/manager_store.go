@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/gofrs/uuid/v5"
-	"github.com/knadh/listmonk/internal/core"
-	"github.com/knadh/listmonk/internal/manager"
-	"github.com/knadh/listmonk/internal/media"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/core"
+	"github.com/appzenowebservices/patra/internal/manager"
+	"github.com/appzenowebservices/patra/internal/media"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/lib/pq"
 )
 

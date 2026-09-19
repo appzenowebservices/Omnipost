@@ -23,9 +23,9 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid/v5"
-	"github.com/knadh/listmonk/internal/i18n"
-	"github.com/knadh/listmonk/internal/utils"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/i18n"
+	"github.com/appzenowebservices/patra/internal/utils"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/lib/pq"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -390,7 +390,7 @@ func (s *Session) ExtractZIP(srcPath string, maxCSVs int) (string, []string, err
 	defer z.Close()
 
 	// Create a temporary directory to extract the files.
-	dir, err := os.MkdirTemp("", "listmonk")
+	dir, err := os.MkdirTemp("", "patra")
 	if err != nil {
 		s.log.Printf("error creating temporary directory for extracting ZIP: %v", err)
 		return "", nil, err

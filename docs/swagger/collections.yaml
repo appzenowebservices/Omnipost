@@ -1,16 +1,16 @@
 openapi: 3.0.0
 
 servers:
-  - description: Listmonk Developement Server
+  - description: Patra Developement Server
     url: http://localhost:9000/api
 
 info:
   version: "1.0.0"
-  title: Listmonk
-  description: The API collection for listmonk
+  title: Patra
+  description: The API collection for patra
   license:
     name: AGPL-3.0 license
-    url: https://github.com/knadh/listmonk/blob/master/LICENSE
+    url: https://github.com/appzenowebservices/Omnipost/blob/master/LICENSE
 
 tags:
   - name: Miscellaneous
@@ -24,37 +24,37 @@ tags:
   - name: Subscribers
     description: Subscribers API
     externalDocs:
-      url: https://listmonk.app/docs/apis/subscribers/
+      url: https://github.com/appzenowebservices/Omnipost/docs/apis/subscribers/
   - name: Bounces
     description: Bounce API
   - name: Lists
     description: Subscriber List API
     externalDocs:
-      url: https://listmonk.app/docs/apis/lists/
+      url: https://github.com/appzenowebservices/Omnipost/docs/apis/lists/
   - name: Import
     description: Import API
     externalDocs:
-      url: https://listmonk.app/docs/apis/lists/
+      url: https://github.com/appzenowebservices/Omnipost/docs/apis/lists/
   - name: Campaigns
     description: Campaign API
     externalDocs:
-      url: https://listmonk.app/docs/apis/campaigns/
+      url: https://github.com/appzenowebservices/Omnipost/docs/apis/campaigns/
   - name: Media
     description: Media API
     externalDocs:
-      url: https://listmonk.app/docs/apis/media/
+      url: https://github.com/appzenowebservices/Omnipost/docs/apis/media/
   - name: Templates
     description: Templates API
     externalDocs:
-      url: https://listmonk.app/docs/apis/templates/
+      url: https://github.com/appzenowebservices/Omnipost/docs/apis/templates/
   - name: Transactional
     description: Transactional API
     externalDocs:
-      url: https://listmonk.app/docs/apis/transactional/
+      url: https://github.com/appzenowebservices/Omnipost/docs/apis/transactional/
   - name: Maintenance
     description: Maintenance API
   - name: Public
-    description: Listmonk Public API
+    description: Patra Public API
 
 paths:
   /health:
@@ -1099,7 +1099,7 @@ paths:
               properties:
                 params:
                   type: string
-                  description: JSON string containing import parameters for more detail https://listmonk.app/docs/apis/import/#params-json-string
+                  description: JSON string containing import parameters for more detail https://github.com/appzenowebservices/Omnipost/docs/apis/import/#params-json-string
                   example: '{"mode":"subscribe", "subscription_status":"confirmed", "delim":",", "lists":[1, 2], "overwrite": true}'
                 file:
                   type: string

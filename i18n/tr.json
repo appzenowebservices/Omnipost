@@ -399,7 +399,7 @@
     "settings.bounces.action": "Eylem",
     "settings.bounces.azureSharedSecret": "Azure Event Grid Paylaşılan Sırrı",
     "settings.bounces.azureSharedSecretHeader": "Azure Paylaşılan Sır Başlığı Adı",
-    "settings.bounces.azureSharedSecretHeaderHelp": "Azure paylaşılan sırrını okumak için isteğe bağlı HTTP başlık adı. Boşsa, listmonk X-Listmonk-Webhook-Secret kullanır.",
+    "settings.bounces.azureSharedSecretHeaderHelp": "Azure paylaşılan sırrını okumak için isteğe bağlı HTTP başlık adı. Boşsa, patra X-Patra-Webhook-Secret kullanır.",
     "settings.bounces.azureSharedSecretHelp": "Azure Event Grid webhook uç noktanız için yapılandırılan paylaşılan sırrı sağlayın.",
     "settings.bounces.blocklist": "Engelleme listesi",
     "settings.bounces.count": "Sıçrama sayısı",

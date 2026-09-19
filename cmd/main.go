@@ -15,18 +15,18 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/v2"
-	"github.com/knadh/listmonk/internal/auth"
-	"github.com/knadh/listmonk/internal/bounce"
-	"github.com/knadh/listmonk/internal/buflog"
-	"github.com/knadh/listmonk/internal/captcha"
-	"github.com/knadh/listmonk/internal/core"
-	"github.com/knadh/listmonk/internal/events"
-	"github.com/knadh/listmonk/internal/i18n"
-	"github.com/knadh/listmonk/internal/manager"
-	"github.com/knadh/listmonk/internal/media"
-	"github.com/knadh/listmonk/internal/messenger/email"
-	"github.com/knadh/listmonk/internal/subimporter"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/auth"
+	"github.com/appzenowebservices/patra/internal/bounce"
+	"github.com/appzenowebservices/patra/internal/buflog"
+	"github.com/appzenowebservices/patra/internal/captcha"
+	"github.com/appzenowebservices/patra/internal/core"
+	"github.com/appzenowebservices/patra/internal/events"
+	"github.com/appzenowebservices/patra/internal/i18n"
+	"github.com/appzenowebservices/patra/internal/manager"
+	"github.com/appzenowebservices/patra/internal/media"
+	"github.com/appzenowebservices/patra/internal/messenger/email"
+	"github.com/appzenowebservices/patra/internal/subimporter"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/knadh/paginator"
 	"github.com/knadh/stuffbin"
 )
@@ -120,10 +120,10 @@ func init() {
 	initConfigFiles(ko.Strings("config"), ko)
 
 	// Load environment variables and merge into the loaded config.
-	// LISTMONK_foo__bar -> foo.bar (double underscore becomes dot for nested config)
-	// LISTMONK_static_dir -> static-dir (top-level keys with underscore become hyphen for CLI flags)
-	if err := ko.Load(env.Provider("LISTMONK_", ".", func(s string) string {
-		key := strings.ToLower(strings.TrimPrefix(s, "LISTMONK_"))
+	// PATRA_foo__bar -> foo.bar (double underscore becomes dot for nested config)
+	// PATRA_static_dir -> static-dir (top-level keys with underscore become hyphen for CLI flags)
+	if err := ko.Load(env.Provider("PATRA_", ".", func(s string) string {
+		key := strings.ToLower(strings.TrimPrefix(s, "PATRA_"))
 		key = strings.Replace(key, "__", ".", -1)
 		// Only convert underscore to hyphen for top-level keys (CLI flags like static-dir, i18n-dir)
 		// Nested config keys (containing dots) keep underscores (e.g., db.ssl_mode)
@@ -186,9 +186,9 @@ func init() {
 		initSettings(q.Query, db, ko)
 	}
 
-	// OmniPost SaaS: OMNIPOST_SMTP_* env vars override the DB SMTP config
+	// Patra SaaS: PATRA_SMTP_* env vars override the DB SMTP config
 	// with the Hostinger preset (no-op when unset).
-	applyOmniPostSMTPEnv(ko, db)
+	applyPatraSMTPEnv(ko, db)
 
 	// Prepare queries.
 	queries = prepareQueries(qMap, db, ko)

@@ -8,9 +8,9 @@ import (
 
 	"github.com/gofrs/uuid/v5"
 	"github.com/jmoiron/sqlx"
-	"github.com/knadh/listmonk/internal/auth"
-	"github.com/knadh/listmonk/internal/utils"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/internal/auth"
+	"github.com/appzenowebservices/patra/internal/utils"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/knadh/stuffbin"
 	"github.com/lib/pq"
 	null "gopkg.in/volatiletech/null.v6"
@@ -23,7 +23,7 @@ func install(lastVer string, db *sqlx.DB, fs stuffbin.FileSystem, prompt, idempo
 	fmt.Println("")
 	if !idempotent {
 		fmt.Println("** first time installation **")
-		fmt.Printf("** IMPORTANT: This will wipe existing listmonk tables and types in the DB '%s' **",
+		fmt.Printf("** IMPORTANT: This will wipe existing patra tables and types in the DB '%s' **",
 			ko.String("db.database"))
 	} else {
 		fmt.Println("** first time (idempotent) installation **")
@@ -60,9 +60,9 @@ func install(lastVer string, db *sqlx.DB, fs stuffbin.FileSystem, prompt, idempo
 		lo.Fatalf("error migrating DB schema: %v", err)
 	}
 
-	// OmniPost SaaS: seed the Hostinger SMTP preset from OMNIPOST_SMTP_*
+	// Patra SaaS: seed the Hostinger SMTP preset from PATRA_SMTP_*
 	// env vars when present (no-op when unset).
-	applyOmniPostSMTPEnv(ko, db)
+	applyPatraSMTPEnv(ko, db)
 
 	// Load the queries.
 	q := prepareQueries(qMap, db, ko)
@@ -81,9 +81,9 @@ func install(lastVer string, db *sqlx.DB, fs stuffbin.FileSystem, prompt, idempo
 
 	// Setup admin user optionally.
 	var (
-		user     = os.Getenv("LISTMONK_ADMIN_USER")
-		password = os.Getenv("LISTMONK_ADMIN_PASSWORD")
-		apiUser  = os.Getenv("LISTMONK_ADMIN_API_USER")
+		user     = os.Getenv("PATRA_ADMIN_USER")
+		password = os.Getenv("PATRA_ADMIN_PASSWORD")
+		apiUser  = os.Getenv("PATRA_ADMIN_API_USER")
 
 		hasUser = false
 	)
@@ -91,7 +91,7 @@ func install(lastVer string, db *sqlx.DB, fs stuffbin.FileSystem, prompt, idempo
 	// Admin user.
 	if user != "" && password != "" {
 		if len(user) < 3 || len(password) < 8 {
-			lo.Fatal("LISTMONK_ADMIN_USER should be min 3 chars and LISTMONK_ADMIN_PASSWORD should be min 8 chars")
+			lo.Fatal("PATRA_ADMIN_USER should be min 3 chars and PATRA_ADMIN_PASSWORD should be min 8 chars")
 		}
 
 		lo.Printf("creating superadmin user '%s'", user)
@@ -103,11 +103,11 @@ func install(lastVer string, db *sqlx.DB, fs stuffbin.FileSystem, prompt, idempo
 	// API User.
 	if apiUser != "" {
 		if !hasUser {
-			lo.Fatal("LISTMONK_ADMIN_API_USER requires LISTMONK_ADMIN_USER and LISTMONK_ADMIN_PASSWORD to be set")
+			lo.Fatal("PATRA_ADMIN_API_USER requires PATRA_ADMIN_USER and PATRA_ADMIN_PASSWORD to be set")
 		}
 
 		if len(apiUser) < 3 {
-			lo.Fatal("LISTMONK_ADMIN_API_USER should be min 3 chars")
+			lo.Fatal("PATRA_ADMIN_API_USER should be min 3 chars")
 		}
 
 		lo.Printf("creating superadmin API user '%s'", apiUser)
@@ -249,15 +249,15 @@ func installCampaign(campTplID, archiveTplID int, q *models.Queries) {
 	if _, err := q.CreateCampaign.Exec(uuid.Must(uuid.NewV4()),
 		models.CampaignTypeRegular,
 		"Test campaign",
-		"Welcome to listmonk",
+		"Welcome to Patra",
 		"No Reply <noreply@yoursite.com>",
 		`<h3>Hi {{ .Subscriber.FirstName }}!</h3>
 		<p>This is a test e-mail campaign. Your second name is {{ .Subscriber.LastName }} and you are from {{ .Subscriber.Attribs.city }}.</p>
-		<p>Here is a <a href="https://listmonk.app@TrackLink">tracked link</a>.</p>
+		<p>Here is a <a href="https://example.com@TrackLink">tracked link</a>.</p>
 		<p>Use the link icon in the editor toolbar or when writing raw HTML or Markdown,
 			simply suffix @TrackLink to the end of a URL to turn it into a tracking link. Example:</p>
-		<pre>&lt;a href=&quot;https:/&zwnj;/listmonk.app&#064;TrackLink&quot;&gt;&lt;/a&gt;</pre>
-		<p>For help, refer to the <a href="https://listmonk.app/docs">documentation</a>.</p>
+		<pre>&lt;a href=&quot;https:/&zwnj;/example.com&#064;TrackLink&quot;&gt;&lt;/a&gt;</pre>
+		<p>For help, refer to the <a href="https://github.com/appzenowebservices/Omnipost/docs">documentation</a>.</p>
 		`,
 		nil,
 		"richtext",
@@ -269,7 +269,7 @@ func installCampaign(campTplID, archiveTplID int, q *models.Queries) {
 		campTplID,
 		pq.Int64Array{1},
 		false,
-		"welcome-to-listmonk",
+		"welcome-to-patra",
 		archiveTplID,
 		`{"name": "Subscriber"}`,
 		nil,
@@ -332,7 +332,7 @@ func installUser(username, password, apiUsername string, q *models.Queries) {
 	}
 
 	// Create the admin user.
-	if _, err := q.CreateUser.Exec(username, true, password, username+"@listmonk", username, auth.RoleTypeUser, role.ID, nil, auth.UserStatusEnabled); err != nil {
+	if _, err := q.CreateUser.Exec(username, true, password, username+"@patra", username, auth.RoleTypeUser, role.ID, nil, auth.UserStatusEnabled); err != nil {
 		lo.Fatalf("error creating superadmin user: %v", err)
 	}
 
@@ -354,7 +354,7 @@ func installUser(username, password, apiUsername string, q *models.Queries) {
 		}
 
 		// Print the token to stdout so that it can be grepped out.
-		lo.Println("writing API token LISTMONK_ADMIN_API_TOKEN to stderr")
-		fmt.Fprintf(os.Stderr, "export LISTMONK_ADMIN_API_TOKEN=\"%s\"\n", tk)
+		lo.Println("writing API token PATRA_ADMIN_API_TOKEN to stderr")
+		fmt.Fprintf(os.Stderr, "export PATRA_ADMIN_API_TOKEN=\"%s\"\n", tk)
 	}
 }

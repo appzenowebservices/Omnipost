@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pkill -9 listmonk
+pkill -9 patra
  cd ../
-./listmonk --install --yes
-./listmonk > /dev/null 2>/dev/null &
+./patra --install --yes
+./patra > /dev/null 2>/dev/null &

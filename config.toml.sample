@@ -9,21 +9,21 @@ address = "localhost:9000"
 [db]
 host = "localhost"
 port = 5432
-user = "listmonk"
-password = "listmonk"
+user = "patra"
+password = "patra"
 
 # Ensure that this database has been created in Postgres.
-database = "listmonk"
+database = "patra"
 
 ssl_mode = "disable"
 max_open = 25
 max_idle = 25
 max_lifetime = "300s"
 
-# Optional space separated Postgres DSN params. eg: "application_name=listmonk gssencmode=disable"
+# Optional space separated Postgres DSN params. eg: "application_name=patra gssencmode=disable"
 params = ""
 
-# OmniPost e-mail channel: SMTP settings live in the DB (Settings UI), seeded
+# Patra e-mail channel: SMTP settings live in the DB (Settings UI), seeded
 # from schema.sql with the Hostinger preset. To auto-configure via environment
-# instead, set OMNIPOST_SMTP_HOST/PORT/USERNAME/PASSWORD/AUTH/TLS/NAME and
-# OMNIPOST_FROM_EMAIL (see .env.sample). Unset = use DB values.
+# instead, set PATRA_SMTP_HOST/PORT/USERNAME/PASSWORD/AUTH/TLS/NAME and
+# PATRA_FROM_EMAIL (see .env.sample). Unset = use DB values.

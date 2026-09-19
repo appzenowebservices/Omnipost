@@ -69,7 +69,7 @@
               </div>
             </div><!-- auth -->
             <div class="spaced-links is-size-7">
-              <a href="#" @click.prevent="() => fillSettings(n, 'hostinger')">Hostinger (OmniPost default)</a>
+              <a href="#" @click.prevent="() => fillSettings(n, 'hostinger')">Hostinger (Patra default)</a>
               <a href="#" @click.prevent="() => fillSettings(n, 'gmail')">Gmail</a>
               <a href="#" @click.prevent="() => fillSettings(n, 'ses')">Amazon SES</a>
               <a href="#" @click.prevent="() => fillSettings(n, 'azure')">Azure ACS</a>

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -85,7 +85,7 @@ func (p *Postmark) ProcessBounce(b []byte, c echo.Context) ([]models.Bounce, err
 
 	// Look for the campaign ID in headers.
 	campUUID := ""
-	if v, ok := n.Metadata["X-Listmonk-Campaign"]; ok {
+	if v, ok := n.Metadata["X-Patra-Campaign"]; ok {
 		campUUID = v
 	}
 

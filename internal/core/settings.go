@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx/types"
-	"github.com/knadh/listmonk/models"
+	"github.com/appzenowebservices/patra/models"
 	"github.com/labstack/echo/v4"
 )
 

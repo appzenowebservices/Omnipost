@@ -48,7 +48,7 @@ type fcmErrorResp struct {
 
 // serviceAccountKey reads the JSON key from the environment.
 func serviceAccountKey() ([]byte, string) {
-	for _, k := range []string{"FIREBASE_SERVICE_ACCOUNT_KEY", "OMNIPOST_FIREBASE_SERVICE_ACCOUNT_KEY", "LISTMONK_FIREBASE_SERVICE_ACCOUNT_KEY"} {
+	for _, k := range []string{"FIREBASE_SERVICE_ACCOUNT_KEY", "PATRA_FIREBASE_SERVICE_ACCOUNT_KEY"} {
 		if v := strings.TrimSpace(os.Getenv(k)); v != "" {
 			return []byte(v), k
 		}
@@ -74,7 +74,7 @@ func NewFromEnv() (*Client, error) {
 
 	projectID := strings.TrimSpace(os.Getenv("FIREBASE_PROJECT_ID"))
 	if projectID == "" {
-		projectID = strings.TrimSpace(os.Getenv("OMNIPOST_FIREBASE_PROJECT_ID"))
+		projectID = strings.TrimSpace(os.Getenv("PATRA_FIREBASE_PROJECT_ID"))
 	}
 	if projectID == "" {
 		projectID = parsed.ProjectID

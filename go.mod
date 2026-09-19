@@ -1,4 +1,4 @@
-module github.com/knadh/listmonk
+module github.com/appzenowebservices/patra
 
 go 1.26.1
 
