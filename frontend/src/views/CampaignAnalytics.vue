@@ -76,16 +76,15 @@ import { mapState } from 'vuex';
 import { colors } from '../constants';
 import Chart from '../components/Chart.vue';
 
-const chartColorRed = '#ee7d5b';
 const chartColors = [
   colors.primary,
-  '#FFB50D',
-  '#41AC9C',
-  chartColorRed,
-  '#7FC7BC',
-  '#3a82d6',
-  '#688ED9',
-  '#FFC43D',
+  colors.accent,
+  '#0EA5E9',
+  '#14B8A6',
+  '#8B5CF6',
+  colors.danger,
+  colors.secondary,
+  colors.success,
 ];
 
 export default Vue.extend({
@@ -131,7 +130,7 @@ export default Vue.extend({
           data: null,
           fn: this.$api.getCampaignBounceCounts,
           chartFn: this.makeCharts,
-          donutColor: chartColorRed,
+          donutColor: colors.danger,
           loading: false,
         },
 

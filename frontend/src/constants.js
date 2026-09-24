@@ -48,8 +48,15 @@ export const timestamp = 'ddd D MMM YYYY, hh:mm A';
 
 export const colors = Object.freeze({
   primary: '#4F46E5',
+  primaryDark: '#4338CA',
+  primarySoft: '#EEF2FF',
   secondary: '#475569',
+  secondaryInk: '#0F172A',
   accent: '#F59E0B',
+  accentDark: '#D97706',
+  accentSoft: '#FEF3C7',
+  danger: '#FF5722',
+  success: '#36995b',
 });
 
 export const regDuration = '[0-9]+(ms|s|m|h|d)';
