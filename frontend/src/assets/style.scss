@@ -21,8 +21,8 @@
 
 $body-family: "Inter", "Helvetica Neue", sans-serif;
 $body-size: 15px;
-$background: $white-bis;
-$body-background-color: $white-bis;
+$background: #F1F5F9;
+$body-background-color: #F1F5F9;
 $primary: #4F46E5;
 $primary-dark: #4338CA;
 $primary-soft: #EEF2FF;
@@ -141,8 +141,8 @@ section {
 
 .box {
   background: $white;
-  box-shadow: 2px 2px 0 #f3f3f3;
-  border: 1px solid #e6e6e6;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  border: 1px solid #E2E8F0;
 }
   .box hr {
     background-color: #efefef;
@@ -219,12 +219,12 @@ section {
 
   .sidebar {
     flex-shrink: 1;
-    box-shadow: 0 0 3px $grey-lighter;
-    background: $white;
+    box-shadow: none;
+    background: $secondary-ink;
   }
 
   .main {
-    background: $white;
+    background: transparent;
     margin-left: 15px;
     padding: 30px;
     flex-grow: 1;
@@ -258,13 +258,28 @@ section {
   .sidebar-content {
     background: transparent;
   }
+  .menu-label {
+    color: #94A3B8;
+  }
   .menu-list {
-    .router-link-exact-active {
+    a {
+      color: #CBD5E1;
+      border-radius: 0;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+      }
+    }
+    a.is-active, .router-link-exact-active {
+      background: rgba(79, 70, 229, 0.35);
+      color: #fff;
       border-right: 5px solid $accent;
       outline: 0 none;
     }
     li ul {
       margin-right: 0;
+      border-left: 1px solid rgba(255, 255, 255, 0.12) !important;
     }
     > li {
       margin-bottom: 10px;
@@ -785,7 +800,10 @@ section.dashboard {
   }
 
   .level-item {
-    background-color: $white-bis;
+    background-color: $white;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
     padding: 30px;
     margin: 10px;
 
