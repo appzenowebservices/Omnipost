@@ -16,6 +16,8 @@ config.toml
 docker-compose.override.yml
 node_modules
 patra
+patra.exe
+patra-*.log
 dist/*
 uploads/
 # Local env / secrets — never commit.

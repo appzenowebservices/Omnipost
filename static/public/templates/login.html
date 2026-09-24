@@ -1,43 +1,55 @@
 {{ define "admin-login" }}
 {{ template "header" .}}
 
-<section class="login">
-	<h2>{{ .L.T "users.login"}}</h2>
-	{{ if .Data.PasswordEnabled }}
-	<form method="post" action="/admin/login" class="form">
-		<div>
-			<input type="hidden" name="nonce" value="{{ .Data.Nonce }}" />
-			<input type="hidden" name="next" value="{{ .Data.NextURI }}" />
-			<p>
-				<label for="username">{{ .L.T "users.username" }}</label>
-				<input id="username" type="text" name="username" autofocus required minlength="3" />
-			</p>
-			<p>
-				<label for="password">{{ .L.T "users.password" }}</label>
-				<input id="password" type="password" name="password" required minlength="8" />
-			</p>
+<section class="login login-split">
+	<div class="login-brand">
+		<span class="login-brand-badge"><img src="/public/static/logo.svg?v={{ .AssetVersion }}" alt="{{ .SiteName }}" /></span>
+		<h2>{{ .SiteName }}</h2>
+		<p class="login-tagline">Newsletters, mailing lists and web-push &mdash; self-hosted, all in one place.</p>
+		<ul class="login-points">
+			<li>Campaigns with opens, clicks &amp; bounces analytics</li>
+			<li>Lists, segments and ready-made subscription forms</li>
+			<li>SMTP and web-push channels from one dashboard</li>
+		</ul>
+	</div>
+	<div class="login-card">
+		<h2>{{ .L.T "users.login"}}</h2>
+		{{ if .Data.PasswordEnabled }}
+		<form method="post" action="/admin/login" class="form">
+			<div>
+				<input type="hidden" name="nonce" value="{{ .Data.Nonce }}" />
+				<input type="hidden" name="next" value="{{ .Data.NextURI }}" />
+				<p>
+					<label for="username">{{ .L.T "users.username" }}</label>
+					<input id="username" type="text" name="username" autofocus required minlength="3" autocomplete="username" />
+				</p>
+				<p>
+					<label for="password">{{ .L.T "users.password" }}</label>
+					<input id="password" type="password" name="password" required minlength="8" autocomplete="current-password" />
+				</p>
 
-			{{ if .Data.Error }}<p><span class="error">{{ .Data.Error }}</span></p>{{ end }}
+				{{ if .Data.Error }}<p><span class="error">{{ .Data.Error }}</span></p>{{ end }}
 
-			<p class="submit"><button class="button" type="submit">{{ .L.T "users.login" }}</button></p>
-		</div>
-	</form>
-	{{ end }}
-	
-	{{ if .Data.OIDCProvider }}
-	<form method="post" action="/auth/oidc">
-		<div>
-			<input type="hidden" name="nonce" value="{{ .Data.Nonce }}" />
-			<input type="hidden" name="next" value="{{ .Data.NextURI }}" />
-			<p><button class="button button-outline" type="submit">
-				<img src="{{ .RootURL }}/public/static/auth/{{ .Data.OIDCProviderLogo }}" alt="" />
-				{{ .L.Ts "users.loginOIDC" "name" .Data.OIDCProvider }}
-			</button></p>
-		</div>
-	</form>
-	{{ end }}
+				<p class="submit"><button class="button" type="submit">{{ .L.T "users.login" }}</button></p>
+			</div>
+		</form>
+		{{ end }}
 
-	<p class="center small"><a href="{{ .RootURL }}/admin/forgot">{{ .L.T "users.forgotPassword" }}</a></p>
+		{{ if .Data.OIDCProvider }}
+		<form method="post" action="/auth/oidc">
+			<div>
+				<input type="hidden" name="nonce" value="{{ .Data.Nonce }}" />
+				<input type="hidden" name="next" value="{{ .Data.NextURI }}" />
+				<p><button class="button button-outline" type="submit">
+					<img src="{{ .RootURL }}/public/static/auth/{{ .Data.OIDCProviderLogo }}" alt="" />
+					{{ .L.Ts "users.loginOIDC" "name" .Data.OIDCProvider }}
+				</button></p>
+			</div>
+		</form>
+		{{ end }}
+
+		<p class="center small"><a href="{{ .RootURL }}/admin/forgot">{{ .L.T "users.forgotPassword" }}</a></p>
+	</div>
 
 </section>
 
