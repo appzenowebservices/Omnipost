@@ -1,16 +1,38 @@
 {{ define "home" }}
 {{ template "header" .}}
 
-<section class="center">
-	<a href="admin" class="button">{{ L.T "users.login" }}</a>
+<section class="landing">
+	<div class="landing-hero">
+		<span class="login-brand-badge"><img src="/public/static/logo.svg?v={{ .AssetVersion }}" alt="{{ .SiteName }}" /></span>
+		<h1>{{ .SiteName }}</h1>
+		<p class="landing-tagline">Newsletters, mailing lists and web-push &mdash; self-hosted, all in one place.</p>
+		<p class="landing-cta"><a href="admin" class="button button-accent">{{ L.T "users.login" }}</a></p>
+		<div class="landing-links">
+			{{ if .EnablePublicSubPage }}
+				<a href="{{ .RootURL }}/subscription/form">{{ L.T "public.sub" }}</a>
+			{{ end }}
+			{{ if .EnablePublicArchive }}
+			    <a href="{{ .RootURL }}/archive">{{ L.T "public.archiveTitle" }}</a>
+			{{ end }}
+		</div>
+	</div>
 
-	<div class="home-options">
-		{{ if .EnablePublicSubPage }}
-			<a href="{{ .RootURL }}/subscription/form">{{ L.T "public.sub" }}</a>
-		{{ end }}
-		{{ if .EnablePublicArchive }}
-		    <a href="{{ .RootURL }}/archive">{{ L.T "public.archiveTitle" }}</a>
-		{{ end }}
+	<div class="landing-features">
+		<div class="landing-feature">
+			<span class="landing-num">01</span>
+			<h3>Campaigns</h3>
+			<p>Compose once, track opens, clicks and bounces with built-in analytics.</p>
+		</div>
+		<div class="landing-feature">
+			<span class="landing-num">02</span>
+			<h3>Lists &amp; forms</h3>
+			<p>Segments, opt-in flows and ready-made subscription pages.</p>
+		</div>
+		<div class="landing-feature">
+			<span class="landing-num">03</span>
+			<h3>Channels</h3>
+			<p>SMTP e-mail and browser web-push, managed from one dashboard.</p>
+		</div>
 	</div>
 </section>
 

@@ -104,6 +104,14 @@ input[disabled] {
   background-color: var(--primary-dark);
   color: #fff;
 }
+.button.button-accent {
+  background: var(--accent);
+  color: var(--secondary);
+}
+.button.button-accent:hover {
+  background: var(--accent-dark);
+  color: #fff;
+}
 
 .container {
   margin: 60px auto 15px auto;
@@ -180,6 +188,89 @@ input[disabled] {
   .home-options a {
     margin: 0 7px;
   }
+
+/* Root landing page. */
+.container:has(.landing) {
+  max-width: 920px;
+}
+.container:has(.landing) .header {
+  display: none;
+}
+.landing-hero {
+  background: linear-gradient(150deg, var(--primary) 0%, var(--primary-dark) 55%, var(--secondary) 130%);
+  color: #fff;
+  text-align: center;
+  padding: 56px 40px 48px 40px;
+  border-radius: 10px;
+}
+.landing-hero .login-brand-badge {
+  margin-bottom: 20px;
+}
+.landing-hero h1 {
+  color: #fff;
+  font-size: 2.4em;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+}
+.landing-tagline {
+  color: #E0E7FF;
+  font-size: 1.1em;
+  margin: 0 auto 28px auto;
+  max-width: 520px;
+  line-height: 1.6;
+}
+.landing-cta {
+  margin: 0 0 24px 0;
+}
+.landing-cta .button {
+  min-width: 200px;
+}
+.landing-links a {
+  display: inline-block;
+  margin: 0 8px;
+  padding: 8px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 30px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+.landing-links a:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+.landing-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+.landing-feature {
+  background: #fff;
+  border: 1px solid #eee;
+  border-top: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 22px 20px;
+  box-shadow: 2px 2px 0 #f3f3f3;
+}
+.landing-feature h3 {
+  color: var(--secondary);
+  font-weight: 700;
+  margin: 8px 0 6px 0;
+  font-size: 1.05em;
+}
+.landing-feature p {
+  margin: 0;
+  color: #555;
+  font-size: 0.9em;
+  line-height: 1.55;
+}
+.landing-num {
+  color: var(--accent-dark);
+  font-weight: 700;
+  font-size: 0.85em;
+  letter-spacing: 0.08em;
+}
 
 .pagination {
   margin-top: 30px;
@@ -344,6 +435,15 @@ footer.container {
   }
 }
 @media screen and (max-width: 760px) {
+  .landing-features {
+    grid-template-columns: 1fr;
+  }
+  .landing-hero {
+    padding: 40px 26px 36px 26px;
+  }
+  .landing-hero h1 {
+    font-size: 1.8em;
+  }
   .login-split {
     grid-template-columns: 1fr;
   }
