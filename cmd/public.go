@@ -803,9 +803,12 @@ func (a *App) processSubForm(c echo.Context) (bool, error) {
 		lastErr = err
 	}
 
-	// Something else went wrong.
+	// Something else went wrong. The subscriber row is already written at
+	// this point (e.g. a post-write opt-in e-mail send failure), so log the
+	// real exception with context instead of swallowing it into a generic 500.
 	if e, ok := lastErr.(*echo.HTTPError); ok {
 		return false, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("%s", e.Message))
 	}
+	lo.Printf("error processing public subscription for %s (lists %v): %v", req.Email, req.FormListUUIDs, lastErr)
 	return false, echo.NewHTTPError(http.StatusInternalServerError, a.i18n.T("public.errorProcessingRequest"))
 }

@@ -23,6 +23,9 @@ services:
       - .env                                                  # Patra: PATRA_DATABASE_URL + PATRA_SMTP_* live here (see .env.sample).
     environment:                                              # The same params as in config.toml are passed as env vars here.
       PATRA_app__address: 0.0.0.0:9000
+      # Public base URL used for subscription pages, archive links and
+      # opt-in confirmation e-mails. Overrides the DB app.root_url (no-op when empty).
+      PATRA_app__root_url: "${PATRA_app__root_url:-}"
       # Cloud DB URL (Supabase direct connection, port 5432 — NOT the 6543
       # transaction pooler, as the app uses prepared statements).
       PATRA_DATABASE_URL: "${PATRA_DATABASE_URL:-}"

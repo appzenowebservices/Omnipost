@@ -97,6 +97,10 @@ func applyPatraSMTPEnv(ko *koanf.Koanf, db *sqlx.DB) {
 
 	ko.Set("smtp", []map[string]any{server})
 	lo.Printf("Patra SMTP preset active: %s:%d (user %s)", host, port, username)
+	if password == "" || password == "changeme" {
+		lo.Printf("WARNING: SMTP password is empty or the schema.sql placeholder ('changeme'). " +
+			"Opt-in/campaign e-mails will fail to send. Set PATRA_SMTP_PASSWORD or update Settings -> SMTP.")
+	}
 
 	if fromEmail != "" {
 		ko.Set("app.from_email", fromEmail)
@@ -117,6 +121,37 @@ func applyPatraSMTPEnv(ko *koanf.Koanf, db *sqlx.DB) {
 			if _, err := db.Exec(`UPDATE settings SET value = $1::JSONB, updated_at = NOW() WHERE key = 'app.from_email'`, string(b)); err != nil {
 				lo.Printf("warning: could not persist PATRA_FROM_EMAIL to settings table: %v", err)
 			}
+		}
+	}
+}
+
+// applyPatraRootURLEnv lets an explicit env var win over the DB-backed
+// app.root_url (seeded as http://localhost:9000 in schema.sql), which
+// otherwise keeps generating localhost links for public forms, archive
+// pages and opt-in confirmation e-mails on production deploys.
+//
+// Supported vars (unset = use DB / Settings UI):
+//
+//	PATRA_app__root_url  e.g. https://omnipost.appzenowebservices.com
+//	PATRA_ROOT_URL       same, shorthand
+func applyPatraRootURLEnv(ko *koanf.Koanf, db *sqlx.DB) {
+	u := firstEnv("PATRA_app__root_url", "PATRA_ROOT_URL")
+	if u == "" {
+		return
+	}
+	u = strings.TrimSuffix(strings.TrimSpace(u), "/")
+
+	ko.Set("app.root_url", u)
+	lo.Printf("Patra root URL override active: %s", u)
+
+	// Persist back to the DB so generated links stay correct even if the
+	// env var is removed later.
+	if db == nil {
+		return
+	}
+	if b, err := json.Marshal(u); err == nil {
+		if _, err := db.Exec(`UPDATE settings SET value = $1::JSONB, updated_at = NOW() WHERE key = 'app.root_url'`, string(b)); err != nil {
+			lo.Printf("warning: could not persist root URL to settings table: %v", err)
 		}
 	}
 }

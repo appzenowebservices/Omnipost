@@ -190,6 +190,11 @@ func init() {
 	// with the Hostinger preset (no-op when unset).
 	applyPatraSMTPEnv(ko, db)
 
+	// Patra SaaS: PATRA_app__root_url env var overrides the DB-backed
+	// app.root_url (seeded as http://localhost:9000) so public links and
+	// opt-in e-mails use the production URL (no-op when unset).
+	applyPatraRootURLEnv(ko, db)
+
 	// Prepare queries.
 	queries = prepareQueries(qMap, db, ko)
 }
