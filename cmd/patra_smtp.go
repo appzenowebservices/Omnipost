@@ -45,6 +45,26 @@ func applyPatraSMTPEnv(ko *koanf.Koanf, db *sqlx.DB) {
 		return
 	}
 
+	// Never replace the working DB-backed SMTP servers with an incomplete
+	// env preset: empty credentials would break all outbound mail (and a
+	// zero-server pool panics the sender). With only a From address given,
+	// just override that and leave the servers alone.
+	if username == "" || password == "" {
+		if fromEmail != "" {
+			ko.Set("app.from_email", fromEmail)
+			if db != nil {
+				if b, err := json.Marshal(fromEmail); err == nil {
+					if _, err := db.Exec(`UPDATE settings SET value = $1::JSONB, updated_at = NOW() WHERE key = 'app.from_email'`, string(b)); err != nil {
+						lo.Printf("warning: could not persist PATRA_FROM_EMAIL to settings table: %v", err)
+					}
+				}
+			}
+		}
+		lo.Printf("WARNING: incomplete SMTP env preset (username/password missing). " +
+			"Keeping the DB-backed SMTP servers from Settings -> SMTP.")
+		return
+	}
+
 	// Zero-config SaaS default: if credentials are given without an
 	// explicit host, assume the Hostinger preset.
 	if host == "" {
@@ -95,7 +115,10 @@ func applyPatraSMTPEnv(ko *koanf.Koanf, db *sqlx.DB) {
 		"from_addresses":  []any{},
 	}
 
-	ko.Set("smtp", []map[string]any{server})
+	// NOTE: koanf Slices() only reads back []any; setting []map[string]any
+	// here would make ko.Slices("smtp") come back empty downstream and
+	// leave the mailer with a zero-server pool.
+	ko.Set("smtp", []any{server})
 	lo.Printf("Patra SMTP preset active: %s:%d (user %s)", host, port, username)
 	if password == "" || password == "changeme" {
 		lo.Printf("WARNING: SMTP password is empty or the schema.sql placeholder ('changeme'). " +

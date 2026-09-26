@@ -134,9 +134,12 @@ func (e *Emailer) Push(m models.Message) error {
 	// to the full pool (empty key) for roundrobin.
 	pool := e.pools[""]
 	if len(e.pools) > 1 {
-		if srvs := e.getPool(m.From); srvs != nil {
+		if srvs := e.getPool(m.From); len(srvs) > 0 {
 			pool = srvs
 		}
+	}
+	if len(pool) == 0 {
+		return fmt.Errorf("no SMTP servers configured: cannot send e-mail to %v", m.To)
 	}
 	srv := pool[rand.Intn(len(pool))]
 
