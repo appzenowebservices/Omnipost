@@ -695,6 +695,16 @@ func initSMTPMessengers() []manager.Messenger {
 			continue
 		}
 
+		// Skip servers that can never authenticate (e.g. credentials wiped
+		// by a bad config write) instead of failing every send with a 535.
+		// Auth-less relays (auth_protocol "none"/"") may omit the username.
+		if auth := item.String("auth_protocol"); item.String("host") == "" ||
+			((auth == "login" || auth == "plain" || auth == "cram") && item.String("username") == "") {
+			lo.Printf("WARNING: skipping SMTP server '%s': missing host or username for auth '%s'. Fix Settings -> SMTP.",
+				item.String("name"), auth)
+			continue
+		}
+
 		// Read the SMTP config.
 		var s email.Server
 		if err := item.UnmarshalWithConf("", &s, koanf.UnmarshalConf{Tag: "json"}); err != nil {
