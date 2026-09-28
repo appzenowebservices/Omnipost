@@ -1,22 +1,27 @@
 {{ define "subscriber-optin" }}
 {{ template "header" . }}
-<h2>{{ L.Ts "email.optin.confirmSubTitle" }}</h2>
-<p>{{ L.Ts "email.optin.confirmSubWelcome" }} {{ .Subscriber.FirstName }}</p>
-<p>{{ L.Ts "email.optin.confirmSubInfo" }}</p>
-<ul>
+<div style="background:#4F46E5;border-top:4px solid #F59E0B;border-radius:10px 10px 0 0;margin:-30px -30px 22px;padding:26px 24px;text-align:center;">
+  <div style="color:#ffffff;font-size:22px;font-weight:800;letter-spacing:.3px;">{{ .SiteName }}</div>
+  <div style="color:#E0E7FF;font-size:13px;margin-top:4px;">Newsletters &amp; updates, straight to your inbox</div>
+</div>
+<h2 style="margin:0 0 8px;font-size:20px;color:#0F172A;">{{ L.Ts "email.optin.confirmSubTitle" }}</h2>
+<p style="margin:0 0 10px;color:#444;">{{ L.Ts "email.optin.confirmSubWelcome" }} <strong>{{ .Subscriber.FirstName }}</strong> — thanks for joining!</p>
+<p style="margin:0 0 10px;color:#444;">{{ L.Ts "email.optin.confirmSubInfo" }}</p>
+<ul style="list-style:none;padding:0;margin:0 0 14px;">
     {{ range $i, $l := .Lists }}
         {{ if eq .Type "public" }}
-            <li>{{ .Name }}</li>
+            <li style="background:#EEF2FF;border-left:4px solid #4F46E5;border-radius:6px;padding:8px 12px;margin:6px 0;font-weight:700;color:#4338CA;">{{ .Name }}</li>
         {{ else }}
-            <li>{{ L.Ts "email.optin.privateList" }}</li>
+            <li style="background:#f4f4f4;border-left:4px solid #999;border-radius:6px;padding:8px 12px;margin:6px 0;color:#555;">{{ L.Ts "email.optin.privateList" }}</li>
         {{ end }}
     {{ end }}
 </ul>
-<p>{{ L.Ts "email.optin.confirmSubHelp" }}</p>
-<p>
-    <a href="{{ .OptinURL }}" class="button">{{ L.Ts "email.optin.confirmSub" }}</a>
+<p style="margin:0 0 16px;color:#555;">{{ L.Ts "email.optin.confirmSubHelp" }}</p>
+<p style="text-align:center;margin:0 0 10px;">
+    <a href="{{ .OptinURL }}" class="button" style="background:#4F46E5;border-radius:8px;padding:13px 38px;font-size:16px;">{{ L.Ts "email.optin.confirmSub" }}</a>
 </p>
-<a href="{{ .UnsubURL }}?manage=true">{{ L.T "email.unsub" }}</a>
+<p style="font-size:12px;color:#888;text-align:center;margin:0 0 14px;word-break:break-all;">Button not working? Paste this link into your browser:<br><a href="{{ .OptinURL }}">{{ .OptinURL }}</a></p>
+<p style="font-size:12px;color:#888;text-align:center;margin:0;">Didn't sign up? Just ignore this email.<br><a href="{{ .UnsubURL }}?manage=true">{{ L.T "email.unsub" }}</a></p>
 
 {{ template "footer" }}
 {{ end }}
