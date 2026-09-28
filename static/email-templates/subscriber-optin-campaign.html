@@ -1,17 +1,21 @@
 {{ define "optin-campaign" }}
 
-<p>{{ L.Ts "email.optin.confirmSubWelcome" }} {{ "{{" }}.Subscriber.FirstName {{ "}}" }}</p>
+<div style="background:linear-gradient(135deg,#15803d 0%,#1d4ed8 100%);border-radius:10px;margin-bottom:18px;padding:24px;text-align:center;">
+  <div style="color:#fff;font-size:21px;font-weight:800;">Apni Desi Dukaan</div>
+  <div style="color:#eef;font-size:13px;">Please confirm your subscription</div>
+</div>
+<p>{{ L.Ts "email.optin.confirmSubWelcome" }} {{ "{{" }}.Subscriber.FirstName {{ "}}" }} — thanks for joining!</p>
 <p>{{ L.Ts "email.optin.confirmSubInfo" }}</p>
-<ul>
+<ul style="list-style:none;padding:0;">
     {{ range $i, $l := .Lists }}
         {{ if eq .Type "public" }}
-            <li>{{ .Name }}</li>
+            <li style="background:#f6f8f6;border-left:4px solid #15803d;border-radius:6px;padding:8px 12px;margin:6px 0;font-weight:700;">{{ .Name }}</li>
         {{ else }}
             <li>{{ L.Ts "email.optin.privateList" }}</li>
         {{ end }}
     {{ end }}
 </ul>
-<p>
-    <a class="button" {{ .OptinURLAttr }}>{{ L.Ts "email.optin.confirmSub" }}</a>
+<p style="text-align:center;">
+    <a class="button" style="background:linear-gradient(135deg,#15803d,#1d4ed8);border-radius:8px;padding:13px 38px;font-size:16px;" {{ .OptinURLAttr }}>{{ L.Ts "email.optin.confirmSub" }} ✓</a>
 </p>
 {{ end }}
