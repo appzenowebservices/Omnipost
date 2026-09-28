@@ -41,6 +41,7 @@ type subQueryReq struct {
 type subOptin struct {
 	models.Subscriber
 
+	SiteName string
 	OptinURL string
 	UnsubURL string
 	Lists    []models.List
@@ -857,7 +858,7 @@ func formatSQLExp(q string) string {
 // makeOptinNotifyHook returns an enclosed callback that sends optin confirmation e-mails.
 // This is plugged into the 'core' package to send optin confirmations when a new subscriber is
 // created via `core.CreateSubscriber()`.
-func makeOptinNotifyHook(unsubHeader bool, u *UrlConfig, q *models.Queries, i *i18n.I18n) func(sub models.Subscriber, listIDs []int) (int, error) {
+func makeOptinNotifyHook(unsubHeader bool, u *UrlConfig, q *models.Queries, i *i18n.I18n, siteName string) func(sub models.Subscriber, listIDs []int) (int, error) {
 	return func(sub models.Subscriber, listIDs []int) (int, error) {
 		// Fetch double opt-in lists from the given list IDs.
 		// Get the list of subscription lists where the subscriber hasn't confirmed.
@@ -873,7 +874,7 @@ func makeOptinNotifyHook(unsubHeader bool, u *UrlConfig, q *models.Queries, i *i
 		}
 
 		var (
-			out      = subOptin{Subscriber: sub, Lists: lists}
+			out      = subOptin{Subscriber: sub, SiteName: siteName, Lists: lists}
 			qListIDs = url.Values{}
 		)
 
