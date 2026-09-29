@@ -1,28 +1,104 @@
 {{ define "subscriber-optin" }}
 {{ template "header" . }}
-<div style="background:#184F86;border-top:4px solid #F59E0B;border-radius:10px 10px 0 0;margin:-30px -30px 22px;padding:26px 24px;text-align:center;">
-  <img src="{{ RootURL }}/public/static/logo.png" alt="{{ .SiteName }}" height="56" style="display:block;margin:0 auto 10px;border:0;" />
-  <div style="color:#ffffff;font-size:22px;font-weight:800;letter-spacing:.3px;">{{ .SiteName }}</div>
-  <div style="color:#D9E5F5;font-size:13px;margin-top:4px;">Newsletters &amp; updates, straight to your inbox</div>
-</div>
-<h2 style="margin:0 0 8px;font-size:20px;color:#0F172A;">{{ L.Ts "email.optin.confirmSubTitle" }}</h2>
-<p style="margin:0 0 10px;color:#444;">{{ L.Ts "email.optin.confirmSubWelcome" }} <strong>{{ .Subscriber.FirstName }}</strong> — thanks for joining!</p>
-<p style="margin:0 0 10px;color:#444;">{{ L.Ts "email.optin.confirmSubInfo" }}</p>
-<ul style="list-style:none;padding:0;margin:0 0 14px;">
-    {{ range $i, $l := .Lists }}
-        {{ if eq .Type "public" }}
-            <li style="background:#E7EEF6;border-left:4px solid #184F86;border-radius:6px;padding:8px 12px;margin:6px 0;font-weight:700;color:#0F3A67;">{{ .Name }}</li>
-        {{ else }}
-            <li style="background:#f4f4f4;border-left:4px solid #999;border-radius:6px;padding:8px 12px;margin:6px 0;color:#555;">{{ L.Ts "email.optin.privateList" }}</li>
-        {{ end }}
-    {{ end }}
-</ul>
-<p style="margin:0 0 16px;color:#555;">{{ L.Ts "email.optin.confirmSubHelp" }}</p>
-<p style="text-align:center;margin:0 0 10px;">
-    <a href="{{ .OptinURL }}" class="button" style="background:#184F86;border-radius:8px;padding:13px 38px;font-size:16px;">{{ L.Ts "email.optin.confirmSub" }}</a>
-</p>
-<p style="font-size:12px;color:#888;text-align:center;margin:0 0 14px;word-break:break-all;">Button not working? Paste this link into your browser:<br><a href="{{ .OptinURL }}">{{ .OptinURL }}</a></p>
-<p style="font-size:12px;color:#888;text-align:center;margin:0;">Didn't sign up? Just ignore this email.<br><a href="{{ .UnsubURL }}?manage=true">{{ L.T "email.unsub" }}</a></p>
 
-{{ template "footer" }}
+<!-- Outer wrapper table style or clean container block -->
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <tr>
+    <td align="center">
+      
+      <!-- Main Email Card -->
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #E2E8F0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        
+        <!-- Header Banner Section -->
+        <tr>
+          <td style="background: linear-gradient(135deg, #184F86 0%, #0F3A67 100%); border-top: 4px solid #F59E0B; padding: 32px 24px; text-align: center;">
+            <img src="{{ RootURL }}/public/static/logo.png" alt="{{ .SiteName }}" height="48" style="display: block; margin: 0 auto 12px; border: 0; outline: none;" />
+            <div style="color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: 0.4px;">{{ .SiteName }}</div>
+            <div style="color: #CBD5E1; font-size: 13px; margin-top: 6px; font-weight: 400;">Newsletters &amp; updates, straight to your inbox</div>
+          </td>
+        </tr>
+
+        <!-- Content Body -->
+        <tr>
+          <td style="padding: 32px 32px 24px 32px;">
+            
+            <!-- UX Context / Action Required Notice -->
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-left: 4px solid #F59E0B; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #D97706; margin-bottom: 6px;">Action Required</div>
+              <h2 style="margin: 0 0 6px 0; font-size: 18px; font-weight: 700; color: #0F172A;">{{ L.Ts "email.optin.confirmSubTitle" }}</h2>
+              <p style="margin: 0; font-size: 14px; color: #475569; line-height: 1.5;">You're receiving this because <strong>{{ .Subscriber.FirstName }}</strong> requested to join the mailing list(s) below on <strong>{{ .SiteName }}</strong>.</p>
+            </div>
+
+            <p style="margin: 0 0 12px 0; font-size: 15px; color: #334155; line-height: 1.5;">
+              {{ L.Ts "email.optin.confirmSubWelcome" }} <strong>{{ .Subscriber.FirstName }}</strong> — thanks for joining!
+            </p>
+            <p style="margin: 0 0 16px 0; font-size: 15px; color: #334155; line-height: 1.5;">
+              {{ L.Ts "email.optin.confirmSubInfo" }}
+            </p>
+
+            <!-- Mailing Lists Badges -->
+            <ul style="list-style: none; padding: 0; margin: 0 0 24px 0;">
+                {{ range $i, $l := .Lists }}
+                    {{ if eq .Type "public" }}
+                        <li style="background: #F1F5F9; border: 1px solid #E2E8F0; border-left: 4px solid #184F86; border-radius: 6px; padding: 12px 16px; margin: 8px 0; font-weight: 600; color: #0F3A67; font-size: 14px; display: flex; justify-content: space-between; align-items: center;">
+                          <span>{{ .Name }}</span>
+                          <span style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; background: #DBEAFE; color: #1E40AF; padding: 3px 8px; border-radius: 4px;">Verified List</span>
+                        </li>
+                    {{ else }}
+                        <li style="background: #F8FAFC; border: 1px solid #E2E8F0; border-left: 4px solid #94A3B8; border-radius: 6px; padding: 12px 16px; margin: 8px 0; color: #64748B; font-size: 14px;">
+                          {{ L.Ts "email.optin.privateList" }}
+                        </li>
+                    {{ end }}
+                {{ end }}
+            </ul>
+
+            <p style="margin: 0 0 20px 0; font-size: 14px; color: #64748B; line-height: 1.5;">
+              {{ L.Ts "email.optin.confirmSubHelp" }}
+            </p>
+
+            <!-- Call to Action Button -->
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 24px;">
+              <tr>
+                <td align="center">
+                  <a href="{{ .OptinURL }}" target="_blank" style="background: #184F86; color: #ffffff; text-decoration: none; font-weight: 600; border-radius: 8px; padding: 14px 36px; font-size: 16px; display: inline-block; box-shadow: 0 2px 4px rgba(24, 79, 134, 0.25);">
+                    {{ L.Ts "email.optin.confirmSub" }}
+                  </a>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Fallback Link -->
+            <p style="font-size: 12px; color: #94A3B8; text-align: center; margin: 0 0 16px 0; line-height: 1.4; word-break: break-all;">
+              Button not working? Paste this link into your browser:<br>
+              <a href="{{ .OptinURL }}" style="color: #184F86; text-decoration: underline;">{{ .OptinURL }}</a>
+            </p>
+
+            <!-- Unsubscribe/Ignored Note -->
+            <p style="font-size: 12px; color: #94A3B8; text-align: center; margin: 0; line-height: 1.4;">
+              Didn't sign up? Just ignore this email.<br>
+              <a href="{{ .UnsubURL }}?manage=true" style="color: #64748B; text-decoration: underline;">{{ L.T "email.unsub" }}</a>
+            </p>
+
+          </td>
+        </tr>
+
+        <!-- Patra SaaS Marketing Footer -->
+        <tr>
+          <td style="background: #F8FAFC; border-top: 1px solid #E2E8F0; padding: 20px 24px; text-align: center;">
+            <p style="margin: 0 0 4px 0; font-size: 12px; color: #475569;">
+              Powered by <strong>Patra</strong> — High-performance email marketing infrastructure.
+            </p>
+            <p style="margin: 0; font-size: 12px; color: #64748B;">
+              Want to run your own newsletters? <a href="https://patra.io" target="_blank" style="color: #184F86; text-decoration: none; font-weight: 600;">Start your Patra journey here &rarr;</a>
+            </p>
+          </td>
+        </tr>
+
+      </table>
+      
+    </td>
+  </tr>
+</table>
+
+{{ template "footer" . }}
 {{ end }}
