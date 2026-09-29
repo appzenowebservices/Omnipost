@@ -155,6 +155,7 @@ func initHTTPHandlers(e *echo.Echo, a *App) {
 		g.GET("/api/lists/:id", hasID(a.GetList))
 		g.POST("/api/lists", pm(a.CreateList, "lists:manage_all"))
 		g.PUT("/api/lists/:id", hasID(a.UpdateList))
+		g.POST("/api/lists/:id/webhook/test", hasID(a.TestListWebhook))
 		g.DELETE("/api/lists", a.DeleteLists)
 		g.DELETE("/api/lists/:id", hasID(a.DeleteList))
 

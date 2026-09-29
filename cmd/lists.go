@@ -102,6 +102,9 @@ func (a *App) CreateList(c echo.Context) error {
 	if !strHasLen(l.Name, 1, stdInputMaxLen) {
 		return echo.NewHTTPError(http.StatusBadRequest, a.i18n.T("lists.invalidName"))
 	}
+	if err := validateListWebhookURL(l.WebhookURL); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
 
 	out, err := a.core.CreateList(l)
 	if err != nil {
@@ -132,6 +135,9 @@ func (a *App) UpdateList(c echo.Context) error {
 	// Validate.
 	if !strHasLen(l.Name, 1, stdInputMaxLen) {
 		return echo.NewHTTPError(http.StatusBadRequest, a.i18n.T("lists.invalidName"))
+	}
+	if err := validateListWebhookURL(l.WebhookURL); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	// Update the list in the DB.

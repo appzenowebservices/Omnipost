@@ -118,6 +118,19 @@ func (c *Core) GetListsByOptin(ids []int, optinType string) ([]models.List, erro
 	return out, nil
 }
 
+// GetListWebhooks returns webhook targets for the given list UUIDs.
+// Server-side only: rows include secrets and must never reach API responses.
+func (c *Core) GetListWebhooks(uuids []string) ([]models.ListWebhook, error) {
+	out := []models.ListWebhook{}
+	if err := c.q.GetListWebhooks.Select(&out, pq.Array(uuids)); err != nil {
+		c.log.Printf("error fetching list webhooks: %v", err)
+		return nil, echo.NewHTTPError(http.StatusInternalServerError,
+			c.i18n.Ts("globals.messages.errorFetching", "name", "{globals.terms.lists}", "error", pqErrMsg(err)))
+	}
+
+	return out, nil
+}
+
 // GetListTypes returns lists by their IDs or UUIDs.
 // If ids is given, then the map returned has the list IDs as keys,
 // otherwise, they have UUIDs as the keys.
@@ -167,7 +180,7 @@ func (c *Core) CreateList(l models.List) (models.List, error) {
 	// Insert and read ID.
 	var newID int
 	l.UUID = uu.String()
-	if err := c.q.CreateList.Get(&newID, l.UUID, l.Name, l.Type, l.Optin, l.Status, pq.StringArray(normalizeTags(l.Tags)), l.Description); err != nil {
+	if err := c.q.CreateList.Get(&newID, l.UUID, l.Name, l.Type, l.Optin, l.Status, pq.StringArray(normalizeTags(l.Tags)), l.Description, l.WebhookURL, l.WebhookSecret); err != nil {
 		c.log.Printf("error creating list: %v", err)
 		return models.List{}, echo.NewHTTPError(http.StatusInternalServerError,
 			c.i18n.Ts("globals.messages.errorCreating", "name", "{globals.terms.list}", "error", pqErrMsg(err)))
@@ -178,7 +191,7 @@ func (c *Core) CreateList(l models.List) (models.List, error) {
 
 // UpdateList updates a given list.
 func (c *Core) UpdateList(id int, l models.List) (models.List, error) {
-	res, err := c.q.UpdateList.Exec(id, l.Name, l.Type, l.Optin, l.Status, pq.StringArray(normalizeTags(l.Tags)), l.Description)
+	res, err := c.q.UpdateList.Exec(id, l.Name, l.Type, l.Optin, l.Status, pq.StringArray(normalizeTags(l.Tags)), l.Description, l.WebhookURL, l.WebhookSecret)
 	if err != nil {
 		c.log.Printf("error updating list: %v", err)
 		return models.List{}, echo.NewHTTPError(http.StatusInternalServerError,

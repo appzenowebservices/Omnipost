@@ -148,6 +148,12 @@ export const updateList = (data) => http.put(
   { loading: models.lists },
 );
 
+export const testListWebhook = (id) => http.post(
+  `/api/lists/${id}/webhook/test`,
+  {},
+  { loading: models.lists },
+);
+
 export const deleteList = (id) => http.delete(
   `/api/lists/${id}`,
   { loading: models.lists },

@@ -53,7 +53,7 @@ SELECT id, uuid, type FROM lists WHERE
     END);
 
 -- name: create-list
-INSERT INTO lists (uuid, name, type, optin, status, tags, description) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id;
+INSERT INTO lists (uuid, name, type, optin, status, tags, description, webhook_url, webhook_secret) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id;
 
 -- name: update-list
 WITH l AS (
@@ -64,6 +64,8 @@ WITH l AS (
         status=(CASE WHEN $5 != '' THEN $5::list_status ELSE status END),
         tags=$6::VARCHAR(100)[],
         description=(CASE WHEN $7 != '' THEN $7 ELSE description END),
+        webhook_url=$8,
+        webhook_secret=(CASE WHEN $9 != '' THEN $9 ELSE webhook_secret END),
         updated_at=NOW()
     WHERE id = $1
     RETURNING id, name
@@ -72,6 +74,12 @@ c AS (
     UPDATE campaign_lists SET list_name = l.name FROM l WHERE campaign_lists.list_id = l.id RETURNING 1
 )
 SELECT COUNT(*) FROM l, c;
+
+-- name: get-list-webhooks
+-- Webhook targets for lifecycle dispatch. Server-side only: includes
+-- secrets, so never expose these rows via the API.
+SELECT id, uuid, webhook_url, webhook_secret FROM lists
+WHERE uuid = ANY($1::UUID[]) AND webhook_url <> '';
 
 -- name: update-lists-date
 UPDATE lists SET updated_at=NOW() WHERE id = ANY($1);

@@ -18,16 +18,23 @@ const (
 type List struct {
 	Base
 
-	UUID             string         `db:"uuid" json:"uuid"`
-	Name             string         `db:"name" json:"name"`
-	Type             string         `db:"type" json:"type"`
-	Optin            string         `db:"optin" json:"optin"`
-	Status           string         `db:"status" json:"status"`
-	Tags             pq.StringArray `db:"tags" json:"tags"`
-	Description      string         `db:"description" json:"description"`
-	SubscriberCount  int            `db:"subscriber_count" json:"subscriber_count"`
-	SubscriberCounts StringIntMap   `db:"subscriber_statuses" json:"subscriber_statuses"`
-	SubscriberID     int            `db:"subscriber_id" json:"-"`
+	UUID        string         `db:"uuid" json:"uuid"`
+	Name        string         `db:"name" json:"name"`
+	Type        string         `db:"type" json:"type"`
+	Optin       string         `db:"optin" json:"optin"`
+	Status      string         `db:"status" json:"status"`
+	Tags        pq.StringArray `db:"tags" json:"tags"`
+	Description string         `db:"description" json:"description"`
+
+	// Optional per-list webhook fired on subscriber confirmation.
+	// The URL is visible to admins; the secret is write-only and never
+	// serialized (see ListWebhook for server-side dispatch).
+	WebhookURL    string `db:"webhook_url" json:"webhook_url"`
+	WebhookSecret string `db:"-" json:"webhook_secret,omitempty"`
+
+	SubscriberCount  int          `db:"subscriber_count" json:"subscriber_count"`
+	SubscriberCounts StringIntMap `db:"subscriber_statuses" json:"subscriber_statuses"`
+	SubscriberID     int          `db:"subscriber_id" json:"-"`
 
 	// This is only relevant when querying the lists of a subscriber.
 	SubscriptionStatus    string    `db:"subscription_status" json:"subscription_status,omitempty"`
@@ -37,4 +44,14 @@ type List struct {
 	// Pseudofield for getting the total number of subscribers
 	// in searches and queries.
 	Total int `db:"total" json:"-"`
+}
+
+// ListWebhook is a per-list webhook target for lifecycle integrations.
+// Server-side only: it carries the secret, so it must never be serialized
+// into API responses.
+type ListWebhook struct {
+	ListID   int    `db:"id" json:"-"`
+	ListUUID string `db:"uuid" json:"-"`
+	URL      string `db:"webhook_url" json:"-"`
+	Secret   string `db:"webhook_secret" json:"-"`
 }

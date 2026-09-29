@@ -54,6 +54,18 @@
             :placeholder="$t('globals.fields.description')" />
         </b-field>
 
+        <b-field label="Confirm webhook URL" label-position="on-border"
+          message="HTTPS endpoint notified when a subscriber confirms. Empty = disabled.">
+          <b-input :maxlength="2000" v-model="form.webhook_url" name="webhook_url" type="url"
+            placeholder="https://example.com/hooks/omnipost-confirmed" />
+        </b-field>
+
+        <b-field label="Confirm webhook secret" label-position="on-border"
+          message="HMAC signing secret. Never shown again — leave blank to keep the saved one.">
+          <b-input :maxlength="500" v-model="form.webhook_secret" name="webhook_secret" type="password"
+            placeholder="••••••••" password-reveal />
+        </b-field>
+
         <b-field :message="$t('lists.archivedHelp')" :label="$t('lists.archived')">
           <b-switch v-model="isArchived" name="status" />
         </b-field>
@@ -61,6 +73,9 @@
       <footer class="modal-card-foot has-text-right">
         <b-button @click="$parent.close()">
           {{ $t('globals.buttons.close') }}
+        </b-button>
+        <b-button v-if="isEditing && data.webhook_url" @click="onTestWebhook" :loading="testingWebhook">
+          Test webhook
         </b-button>
         <b-button v-if="$can('lists:manage_all') || $canList(data.id, 'list:manage')" native-type="submit"
           type="is-primary" :loading="loading.lists" data-cy="btn-save">
@@ -90,6 +105,7 @@ export default Vue.extend({
 
   data() {
     return {
+      testingWebhook: false,
       // Binds form input values.
       form: {
         name: '',
@@ -97,6 +113,8 @@ export default Vue.extend({
         optin: 'single',
         status: 'active',
         tags: [],
+        webhook_url: '',
+        webhook_secret: '',
       },
     };
   },
@@ -124,6 +142,16 @@ export default Vue.extend({
         this.$emit('finished');
         this.$parent.close();
         this.$utils.toast(this.$t('globals.messages.updated', { name: data.name }));
+      });
+    },
+
+    onTestWebhook() {
+      this.testingWebhook = true;
+      this.$api.testListWebhook(this.data.id).then(() => {
+        this.testingWebhook = false;
+        this.$utils.toast('Test event delivered');
+      }).catch(() => {
+        this.testingWebhook = false;
       });
     },
   },

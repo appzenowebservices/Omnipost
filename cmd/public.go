@@ -418,6 +418,9 @@ func (a *App) confirmOptinSubscription(c echo.Context, subUUID string, listUUIDs
 			makeMsgTpl(a.i18n.T("public.errorTitle"), "", a.i18n.Ts("public.errorProcessingRequest")))
 	}
 
+	// Notify external lifecycle integrations. Async and never fails the page.
+	a.dispatchConfirmWebhooks(subUUID, lists)
+
 	return c.Render(http.StatusOK, tplMessage,
 		makeMsgTpl(a.i18n.T("public.subConfirmedTitle"), "", a.i18n.Ts("public.subConfirmed")))
 }

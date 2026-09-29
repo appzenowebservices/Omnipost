@@ -46,6 +46,11 @@ CREATE TABLE lists (
     tags            VARCHAR(100)[],
     description     TEXT NOT NULL DEFAULT '',
 
+    -- Optional per-list webhook fired when a subscriber confirms
+    -- (double opt-in). Empty values mean "no webhook for this list".
+    webhook_url     TEXT NOT NULL DEFAULT '',
+    webhook_secret  TEXT NOT NULL DEFAULT '',
+
     created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
