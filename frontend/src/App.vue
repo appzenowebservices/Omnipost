@@ -3,9 +3,9 @@
     <b-navbar :fixed-top="true" v-if="$root.isLoaded">
       <template #brand>
         <div class="logo">
-          <router-link :to="{ name: 'dashboard' }">
-            <img class="full" src="@/assets/logo.svg" alt="" />
-            <img class="favicon" src="@/assets/favicon.png" alt="" />
+          <router-link :to="{ name: 'dashboard' }" class="brand-lockup">
+            <img class="brand-mark" src="@/assets/logo.png" alt="Patra" />
+            <span class="brand-name">Patra</span>
           </router-link>
         </div>
       </template>
