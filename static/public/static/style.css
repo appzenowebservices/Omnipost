@@ -1,8 +1,8 @@
 :root {
-  --primary: #4F46E5;
-  --primary-dark: #4338CA;
-  --primary-soft: #EEF2FF;
-  --primary-border: #C7D2FE;
+  --primary: #184F86;
+  --primary-dark: #0F3A67;
+  --primary-soft: #E7EEF6;
+  --primary-border: #BFD2E8;
   --secondary: #0F172A;
   --secondary-muted: #64748B;
   --accent: #F59E0B;
@@ -213,7 +213,7 @@ input[disabled] {
   margin: 0 0 12px 0;
 }
 .landing-tagline {
-  color: #E0E7FF;
+  color: #D9E5F5;
   font-size: 1.1em;
   margin: 0 auto 28px auto;
   max-width: 520px;
@@ -350,7 +350,7 @@ input[disabled] {
   font-weight: 700;
 }
 .login-tagline {
-  color: #E0E7FF;
+  color: #D9E5F5;
   margin: 0 0 26px 0;
   font-size: 1.02em;
   line-height: 1.55;

@@ -78,7 +78,7 @@
         }
       },
       "props": {
-        "buttonBackgroundColor": "#4F46E5",
+        "buttonBackgroundColor": "#184F86",
         "text": "This is a button",
         "url": "https://github.com/appzenowebservices/Omnipost"
       }

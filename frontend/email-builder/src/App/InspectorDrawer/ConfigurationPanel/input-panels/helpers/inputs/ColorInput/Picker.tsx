@@ -11,7 +11,7 @@ const DEFAULT_PRESET_COLORS = [
   '#C026D3',
   '#9333EA',
   '#7C3AED',
-  '#4F46E5',
+  '#184F86',
   '#2563EB',
   '#0284C7',
   '#0891B2',
