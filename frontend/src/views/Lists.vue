@@ -236,6 +236,16 @@ export default Vue.extend({
       this.curItem = list;
       this.isFormVisible = true;
       this.isEditing = true;
+
+      // Refresh the row from the server so the form never shows stale
+      // values (e.g. previously typed webhook URLs).
+      this.$api.getList(list.id).then((data) => {
+        if (this.isFormVisible) {
+          this.curItem = data;
+        }
+      }).catch(() => {
+        // Keep the table row on failure; the form still works.
+      });
     },
 
     // Show the new list form.

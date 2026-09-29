@@ -107,7 +107,24 @@ export default Vue.extend({
     return {
       testingWebhook: false,
       // Binds form input values.
-      form: {
+      form: this.blankForm(),
+    };
+  },
+
+  watch: {
+    // Re-sync whenever a (different) row is passed in, so the form can
+    // never show stale values from a previous edit.
+    data: {
+      immediate: true,
+      handler(v) {
+        this.resetForm(v || {});
+      },
+    },
+  },
+
+  methods: {
+    blankForm() {
+      return {
         name: '',
         type: 'private',
         optin: 'single',
@@ -115,11 +132,15 @@ export default Vue.extend({
         tags: [],
         webhook_url: '',
         webhook_secret: '',
-      },
-    };
-  },
+      };
+    },
 
-  methods: {
+    resetForm(data) {
+      this.form = { ...this.blankForm(), ...data };
+      // Secrets are write-only: never carry a previously typed value over.
+      this.form.webhook_secret = '';
+    },
+
     onSubmit() {
       if (this.isEditing) {
         this.updateList();
@@ -170,8 +191,6 @@ export default Vue.extend({
   },
 
   mounted() {
-    this.form = { ...this.form, ...this.$props.data };
-
     this.$nextTick(() => {
       this.$refs.focus.focus();
     });
