@@ -58,6 +58,11 @@
           message="HTTPS endpoint notified when a subscriber confirms. Empty = disabled.">
           <b-input :maxlength="2000" v-model="form.webhook_url" name="webhook_url" type="url"
             placeholder="https://example.com/hooks/omnipost-confirmed" />
+          <p v-if="isEditing" class="help" style="margin-top: 4px;">
+            Saved value:
+            <copy-text v-if="data.webhook_url" :text="data.webhook_url" />
+            <span v-else>—</span>
+          </p>
         </b-field>
 
         <b-field label="Confirm webhook secret" label-position="on-border"

@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -84,7 +85,9 @@ func NewDispatcher(lo *log.Logger) *Dispatcher {
 }
 
 // ValidateURL ensures a webhook target is an absolute http(s) URL.
-// Plain http is only allowed for loopback hosts (local development).
+// Plain http is only allowed for hosts that can never route on the public
+// internet: loopback, single-label Docker-style DNS names (e.g. add-admin),
+// and RFC1918/link-local IPs.
 func ValidateURL(raw string) error {
 	u, err := url.Parse(strings.TrimSpace(raw))
 	if err != nil || !u.IsAbs() {
@@ -93,17 +96,27 @@ func ValidateURL(raw string) error {
 	if u.Scheme != "https" && u.Scheme != "http" {
 		return fmt.Errorf("webhook URL must use http(s) (got %q)", raw)
 	}
-	if u.Scheme == "http" && !isLoopback(u.Hostname()) {
-		return fmt.Errorf("webhook URL must use https outside localhost (got %q)", raw)
-	}
 	if u.Hostname() == "" {
 		return fmt.Errorf("webhook URL has no host (got %q)", raw)
+	}
+	if u.Scheme == "http" && !isPrivateHost(u.Hostname()) {
+		return fmt.Errorf("webhook URL must use https outside private networks (got %q)", raw)
 	}
 	return nil
 }
 
-func isLoopback(host string) bool {
-	return host == "localhost" || host == "127.0.0.1" || host == "::1"
+func isPrivateHost(host string) bool {
+	if host == "localhost" || host == "127.0.0.1" || host == "::1" {
+		return true
+	}
+	// Single-label names (Docker DNS, mDNS, intranet hosts) never resolve publicly.
+	if !strings.Contains(host, ".") {
+		return true
+	}
+	if ip := net.ParseIP(host); ip != nil {
+		return ip.IsPrivate() || ip.IsLinkLocalUnicast() || ip.IsLoopback()
+	}
+	return false
 }
 
 // Sign returns the hex HMAC-SHA256 signature of "<timestamp>.<body>".
