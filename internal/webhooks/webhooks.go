@@ -128,11 +128,28 @@ func Sign(secret string, timestamp int64, body []byte) string {
 	return hex.EncodeToString(mac.Sum(nil))
 }
 
+// Attempt records one delivery attempt's signature material so receivers
+// can triangulate verification failures without ever exposing secrets.
+type Attempt struct {
+	Timestamp int64  `json:"timestamp"`
+	Signature string `json:"signature"`
+	Body      string `json:"body"`
+}
+
 // Send delivers one event to one target synchronously with retries.
 func (d *Dispatcher) Send(t Target, ev Event) error {
+	_, err := d.SendDetailed(t, ev)
+	return err
+}
+
+// SendDetailed is Send that also returns the last attempt's signature
+// material (timestamp, signature, exact body bytes sent).
+func (d *Dispatcher) SendDetailed(t Target, ev Event) (Attempt, error) {
+	var made Attempt
+
 	body, err := json.Marshal(ev)
 	if err != nil {
-		return fmt.Errorf("webhook %s: marshal event: %w", t.URL, err)
+		return made, fmt.Errorf("webhook %s: marshal event: %w", t.URL, err)
 	}
 
 	client := d.Client
@@ -151,13 +168,14 @@ func (d *Dispatcher) Send(t Target, ev Event) error {
 		}
 
 		ts := time.Now().Unix()
+		made = Attempt{Timestamp: ts, Signature: Sign(t.Secret, ts, body), Body: string(body)}
 		req, err := http.NewRequest(http.MethodPost, t.URL, bytes.NewReader(body))
 		if err != nil {
-			return fmt.Errorf("webhook %s: build request: %w", t.URL, err)
+			return made, fmt.Errorf("webhook %s: build request: %w", t.URL, err)
 		}
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set(TimestampHeader, strconv.FormatInt(ts, 10))
-		req.Header.Set(SignatureHeader, Sign(t.Secret, ts, body))
+		req.Header.Set(SignatureHeader, made.Signature)
 
 		res, err := client.Do(req)
 		if err != nil {
@@ -171,14 +189,14 @@ func (d *Dispatcher) Send(t Target, ev Event) error {
 
 		if res.StatusCode >= 200 && res.StatusCode < 300 {
 			d.Log.Printf("confirm webhook to %s (list %s) delivered: %s", t.URL, t.ListUUID, res.Status)
-			return nil
+			return made, nil
 		}
 
-		lastErr = fmt.Errorf("webhook %s: attempt %d: unexpected status %s: %s", t.URL, attempt+1, res.Status, string(respBody))
+		lastErr = fmt.Errorf("webhook %s: attempt %d: unexpected status %s: %s (sent ts=%d sig=%s)", t.URL, attempt+1, res.Status, string(respBody), made.Timestamp, made.Signature)
 		d.Log.Printf("confirm webhook to %s (list %s) failed: %s", t.URL, t.ListUUID, lastErr)
 	}
 
-	return lastErr
+	return made, lastErr
 }
 
 // Dispatch fans one event out to every target, each in its own goroutine.

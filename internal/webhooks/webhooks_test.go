@@ -90,8 +90,15 @@ func TestSendSuccess(t *testing.T) {
 	defer srv.Close()
 
 	d := testDispatcher()
-	if err := d.Send(Target{ListUUID: "list-1", URL: srv.URL, Secret: "s3cr3t"}, testEvent()); err != nil {
+	made, err := d.SendDetailed(Target{ListUUID: "list-1", URL: srv.URL, Secret: "s3cr3t"}, testEvent())
+	if err != nil {
 		t.Fatalf("Send: %v", err)
+	}
+	if made.Signature != gotSig || made.Body != string(gotBody) {
+		t.Error("SendDetailed material does not match what was actually sent")
+	}
+	if made.Timestamp == 0 || made.Signature == "" || made.Body == "" {
+		t.Error("missing attempt material")
 	}
 
 	if gotCT != "application/json" {

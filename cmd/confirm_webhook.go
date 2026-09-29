@@ -132,11 +132,15 @@ func (a *App) TestListWebhook(c echo.Context) error {
 	}
 
 	d := webhooks.NewDispatcher(a.log)
-	if err := d.Send(webhooks.Target{ListID: l.ID, ListUUID: l.UUID, ListName: l.Name, URL: h.URL, Secret: h.Secret}, ev); err != nil {
-		return echo.NewHTTPError(http.StatusBadGateway, fmt.Sprintf("webhook test delivery failed: %v", err))
+	attempt, err := d.SendDetailed(webhooks.Target{ListID: l.ID, ListUUID: l.UUID, ListName: l.Name, URL: h.URL, Secret: h.Secret}, ev)
+	out := map[string]any{"url": h.URL, "sent": attempt}
+	if err != nil {
+		out["delivered"] = false
+		return c.JSON(http.StatusBadGateway, out)
 	}
 
-	return c.JSON(http.StatusOK, okResp{map[string]any{"delivered": true, "url": h.URL}})
+	out["delivered"] = true
+	return c.JSON(http.StatusOK, okResp{out})
 }
 
 // validateListWebhookURL ensures an optional list webhook URL is sane.
