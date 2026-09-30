@@ -98,6 +98,29 @@ func confirmEvent(sub models.Subscriber, lists []models.List, at string, test bo
 	}
 }
 
+// GetListWebhookSecret reveals a list's webhook signing secret so admins
+// can verify or copy it into the receiving app. Requires list manage
+// permission; the secret is never included in normal list responses.
+func (a *App) GetListWebhookSecret(c echo.Context) error {
+	user := auth.GetUser(c)
+	id := getID(c)
+	if err := user.HasListPerm(auth.PermTypeManage, id); err != nil {
+		return err
+	}
+
+	l, err := a.core.GetList(id, "")
+	if err != nil {
+		return err
+	}
+
+	hooks, err := a.core.GetListWebhooks([]string{l.UUID})
+	if err != nil || len(hooks) == 0 || hooks[0].Secret == "" {
+		return echo.NewHTTPError(http.StatusNotFound, "no webhook secret configured for this list")
+	}
+
+	return c.JSON(http.StatusOK, okResp{map[string]any{"webhook_secret": hooks[0].Secret}})
+}
+
 // TestListWebhook sends a signed test event to a list's webhook target so
 // admins can verify the integration on save. Synchronous: the result is
 // reported back to the caller.

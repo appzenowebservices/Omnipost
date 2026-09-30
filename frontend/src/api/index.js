@@ -154,6 +154,11 @@ export const testListWebhook = (id) => http.post(
   { loading: models.lists },
 );
 
+export const getListWebhookSecret = (id) => http.get(
+  `/api/lists/${id}/webhook/secret`,
+  { loading: models.lists },
+);
+
 export const deleteList = (id) => http.delete(
   `/api/lists/${id}`,
   { loading: models.lists },

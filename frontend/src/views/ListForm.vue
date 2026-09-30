@@ -66,9 +66,13 @@
         </b-field>
 
         <b-field label="Confirm webhook secret" label-position="on-border"
-          message="HMAC signing secret. Never shown again — leave blank to keep the saved one.">
+          message="HMAC signing secret. Leave blank to keep the saved one.">
           <b-input :maxlength="500" v-model="form.webhook_secret" name="webhook_secret" type="password"
             placeholder="••••••••" password-reveal />
+          <p class="help" style="margin-top: 4px;">
+            <a href="#" @click.prevent="onRevealSecret">Show saved secret</a>
+            — loads it into this field where the eye icon toggles visibility.
+          </p>
         </b-field>
 
         <b-field :message="$t('lists.archivedHelp')" :label="$t('lists.archived')">
@@ -178,6 +182,13 @@ export default Vue.extend({
         this.$utils.toast('Test event delivered');
       }).catch(() => {
         this.testingWebhook = false;
+      });
+    },
+
+    onRevealSecret() {
+      this.$api.getListWebhookSecret(this.data.id).then((data) => {
+        this.form.webhook_secret = data.webhook_secret;
+        this.$utils.toast('Saved secret loaded — eye icon toggles visibility');
       });
     },
   },
