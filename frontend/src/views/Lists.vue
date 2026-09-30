@@ -171,7 +171,7 @@
 
     <!-- Add / edit form modal -->
     <b-modal scroll="keep" :aria-modal="true" :active.sync="isFormVisible" :width="600" @close="onFormClose">
-      <list-form :data="curItem" :is-editing="isEditing" @finished="formFinished" />
+      <list-form :key="formSeq" :data="curItem" :is-editing="isEditing" @finished="formFinished" />
     </b-modal>
 
     <p v-if="settings['app.cache_slow_queries']" class="has-text-grey">
@@ -202,6 +202,9 @@ export default Vue.extend({
       curItem: null,
       isEditing: false,
       isFormVisible: false,
+      // Bumped on every open/fetch so the form is always a fresh
+      // instance and can never show a previous edit's values.
+      formSeq: 0,
       lists: [],
       queryParams: {
         page: 1,
@@ -233,23 +236,27 @@ export default Vue.extend({
 
     // Show the edit list form.
     showEditForm(list) {
+      this.formSeq += 1;
       this.curItem = list;
       this.isFormVisible = true;
       this.isEditing = true;
 
       // Refresh the row from the server so the form never shows stale
-      // values (e.g. previously typed webhook URLs).
+      // values (e.g. previously typed webhook URLs). The form key bump
+      // below recreates the form with the fresh row.
       this.$api.getList(list.id).then((data) => {
         if (this.isFormVisible) {
           this.curItem = data;
+          this.formSeq += 1;
         }
       }).catch(() => {
-        // Keep the table row on failure; the form still works.
+        this.$utils.toast('Could not refresh list data from the server', 'is-danger');
       });
     },
 
     // Show the new list form.
     showNewForm() {
+      this.formSeq += 1;
       this.curItem = {};
       this.isFormVisible = true;
       this.isEditing = false;
