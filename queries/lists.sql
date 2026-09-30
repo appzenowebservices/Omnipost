@@ -64,7 +64,7 @@ WITH l AS (
         status=(CASE WHEN $5 != '' THEN $5::list_status ELSE status END),
         tags=$6::VARCHAR(100)[],
         description=(CASE WHEN $7 != '' THEN $7 ELSE description END),
-        webhook_url=$8,
+        webhook_url=(CASE WHEN $8 != '' THEN $8 ELSE webhook_url END),
         webhook_secret=(CASE WHEN $9 != '' THEN $9 ELSE webhook_secret END),
         updated_at=NOW()
     WHERE id = $1
