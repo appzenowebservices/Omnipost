@@ -56,18 +56,18 @@
 
         <b-field label="Confirm webhook URL" label-position="on-border"
           message="HTTPS endpoint notified when a subscriber confirms. Empty = disabled.">
-          <b-input :maxlength="2000" v-model="form.webhook_url" name="webhook_url" type="url"
+          <b-input :maxlength="2000" v-model="form.webhookUrl" name="webhook_url" type="url"
             placeholder="https://example.com/hooks/omnipost-confirmed" />
           <p v-if="isEditing" class="help" style="margin-top: 4px;">
             Saved value:
-            <copy-text v-if="data.webhook_url" :text="data.webhook_url" />
+            <copy-text v-if="data.webhookUrl" :text="data.webhookUrl" />
             <span v-else>—</span>
           </p>
         </b-field>
 
         <b-field label="Confirm webhook secret" label-position="on-border"
           message="HMAC signing secret. Leave blank to keep the saved one.">
-          <b-input :maxlength="500" v-model="form.webhook_secret" name="webhook_secret" type="password"
+          <b-input :maxlength="500" v-model="form.webhookSecret" name="webhook_secret" type="password"
             placeholder="••••••••" password-reveal />
           <p class="help" style="margin-top: 4px;">
             <a href="#" @click.prevent="onRevealSecret">Show saved secret</a>
@@ -83,7 +83,7 @@
         <b-button @click="$parent.close()">
           {{ $t('globals.buttons.close') }}
         </b-button>
-        <b-button v-if="isEditing && data.webhook_url" @click="onTestWebhook" :loading="testingWebhook">
+        <b-button v-if="isEditing && data.webhookUrl" @click="onTestWebhook" :loading="testingWebhook">
           Test webhook
         </b-button>
         <b-button v-if="$can('lists:manage_all') || $canList(data.id, 'list:manage')" native-type="submit"
@@ -139,15 +139,15 @@ export default Vue.extend({
         optin: 'single',
         status: 'active',
         tags: [],
-        webhook_url: '',
-        webhook_secret: '',
+        webhookUrl: '',
+        webhookSecret: '',
       };
     },
 
     resetForm(data) {
       this.form = { ...this.blankForm(), ...data };
       // Secrets are write-only: never carry a previously typed value over.
-      this.form.webhook_secret = '';
+      this.form.webhookSecret = '';
     },
 
     onSubmit() {
@@ -160,7 +160,12 @@ export default Vue.extend({
     },
 
     createList() {
-      this.$api.createList(this.form).then((data) => {
+      const payload = {
+        ...this.form,
+        webhook_url: this.form.webhookUrl,
+        webhook_secret: this.form.webhookSecret,
+      };
+      this.$api.createList(payload).then((data) => {
         this.$emit('finished');
         this.$parent.close();
         this.$utils.toast(this.$t('globals.messages.created', { name: data.name }));
@@ -168,7 +173,13 @@ export default Vue.extend({
     },
 
     updateList() {
-      this.$api.updateList({ id: this.data.id, ...this.form }).then((data) => {
+      const payload = {
+        id: this.data.id,
+        ...this.form,
+        webhook_url: this.form.webhookUrl,
+        webhook_secret: this.form.webhookSecret,
+      };
+      this.$api.updateList(payload).then((data) => {
         this.$emit('finished');
         this.$parent.close();
         this.$utils.toast(this.$t('globals.messages.updated', { name: data.name }));
@@ -187,7 +198,7 @@ export default Vue.extend({
 
     onRevealSecret() {
       this.$api.getListWebhookSecret(this.data.id).then((data) => {
-        this.form.webhook_secret = data.webhook_secret;
+        this.form.webhookSecret = data.webhookSecret;
         this.$utils.toast('Saved secret loaded — eye icon toggles visibility');
       });
     },
