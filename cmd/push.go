@@ -42,6 +42,40 @@ func (a *App) GetFirebaseConfig(c echo.Context) error {
 	return c.JSON(http.StatusOK, okResp{getFirebaseWebConfig()})
 }
 
+// logPushConfigStatus logs a one-line web-push configuration summary at
+// startup so missing FIREBASE_* env vars are visible immediately instead of
+// only when an admin tries to enable browser notifications.
+func logPushConfigStatus() {
+	cfg := getFirebaseWebConfig()
+
+	var missing []string
+	if cfg.APIKey == "" {
+		missing = append(missing, "FIREBASE_WEB_API_KEY")
+	}
+	if cfg.ProjectID == "" {
+		missing = append(missing, "FIREBASE_PROJECT_ID")
+	}
+	if cfg.MessagingSenderID == "" {
+		missing = append(missing, "FIREBASE_WEB_SENDER_ID")
+	}
+	if cfg.AppID == "" {
+		missing = append(missing, "FIREBASE_WEB_APP_ID")
+	}
+	if cfg.VAPIDKey == "" {
+		missing = append(missing, "FIREBASE_VAPID_KEY")
+	}
+	if firstEnv("FIREBASE_SERVICE_ACCOUNT_KEY", "PATRA_FIREBASE_SERVICE_ACCOUNT_KEY") == "" {
+		missing = append(missing, "FIREBASE_SERVICE_ACCOUNT_KEY")
+	}
+
+	if len(missing) == 0 {
+		lo.Printf("web-push (FCM) configured: project %s", cfg.ProjectID)
+		return
+	}
+
+	lo.Printf("web-push (FCM) disabled: missing %s (see .env.sample; Firebase Console setup)", strings.Join(missing, ", "))
+}
+
 // ServeFirebaseSW serves /firebase-messaging-sw.js from the site root with
 // the Firebase web config injected from server env. Web Push requires the
 // service worker at the site root scope — it cannot live under /admin/.

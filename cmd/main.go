@@ -195,6 +195,11 @@ func init() {
 	// opt-in e-mails use the production URL (no-op when unset).
 	applyPatraRootURLEnv(ko, db)
 
+	// Log web-push (FCM) configuration readiness at startup so missing
+	// FIREBASE_* env vars surface in logs instead of only when an admin
+	// tries to enable notifications.
+	logPushConfigStatus()
+
 	// Prepare queries.
 	queries = prepareQueries(qMap, db, ko)
 }
