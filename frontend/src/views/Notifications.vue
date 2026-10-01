@@ -76,9 +76,9 @@
         </b-button>
       </form>
       <b-message v-if="sendResult" type="is-success" size="is-small" class="mt-4">
-        Delivered: {{ sendResult.success_count }}, failed: {{ sendResult.failure_count }},
+        Delivered: {{ sendResult.successCount }}, failed: {{ sendResult.failureCount }},
         deactivated stale tokens: {{ sendResult.deactivated }}.
-        Keep this tab open to catch the foreground message, or close it to test the background path.
+        A system notification should appear now. Close this tab and send again to test the background path.
       </b-message>
     </div>
 
@@ -91,9 +91,9 @@
         <b-table-column field="token" label="Token" v-slot="props">
           <code>{{ truncate(props.row.token) }}</code>
         </b-table-column>
-        <b-table-column field="is_active" label="Active" v-slot="props">
-          <b-tag :type="props.row.is_active ? 'is-success' : 'is-danger'" size="is-small">
-            {{ props.row.is_active ? 'yes' : 'no' }}
+        <b-table-column field="isActive" label="Active" v-slot="props">
+          <b-tag :type="props.row.isActive ? 'is-success' : 'is-danger'" size="is-small">
+            {{ props.row.isActive ? 'yes' : 'no' }}
           </b-tag>
         </b-table-column>
         <b-table-column field="created_at" label="Registered" sortable v-slot="props">
@@ -188,9 +188,30 @@ export default Vue.extend({
           const n = payload.notification || {};
           this.foregroundNote = `Foreground message received: ${n.title || ''} ${n.body || ''}`.trim();
           this.$utils.toast(`Push: ${n.title || 'new notification'}`);
+          this.showSystemNotification(n, payload.data || {});
         });
       } catch (e) {
         // Foreground listener is best-effort; background path still works.
+      }
+    },
+
+    // showSystemNotification surfaces a real browser/OS notification for
+    // messages received while the tab is focused. FCM only routes foreground
+    // messages to onMessage (no automatic system popup), so without this a
+    // test with the tab open shows only the in-page note.
+    async showSystemNotification(notification, data) {
+      try {
+        const reg = await navigator.serviceWorker.getRegistration('/firebase-messaging-sw.js');
+        if (!reg || !reg.showNotification) {
+          return;
+        }
+        await reg.showNotification(notification.title || 'Patra', {
+          body: notification.body || '',
+          icon: '/public/static/favicon.png',
+          data,
+        });
+      } catch (e) {
+        // Best-effort: the in-page note still shows the message.
       }
     },
 
