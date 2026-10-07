@@ -22,7 +22,10 @@ dist/*
 uploads/
 # Local env / secrets — never commit.
 .env
+.env.bak
 smtp/.env
+firebase/
+*.log*
 # Local machine / tooling files.
 desktop.ini
 Thumbs.db
