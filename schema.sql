@@ -51,6 +51,10 @@ CREATE TABLE lists (
     webhook_url     TEXT NOT NULL DEFAULT '',
     webhook_secret  TEXT NOT NULL DEFAULT '',
 
+    -- Optional custom double opt-in confirmation e-mail template.
+    -- Empty means the built-in system template (subscriber-optin) is used.
+    optin_template  TEXT NOT NULL DEFAULT '',
+
     created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

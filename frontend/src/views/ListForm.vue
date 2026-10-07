@@ -44,6 +44,11 @@
           </b-select>
         </b-field>
 
+        <b-field v-if="form.optin === 'double'" label="Confirmation e-mail template"
+          label-position="on-border" :message="templateHelp">
+          <code-editor lang="html" v-model="form.optinTemplate" name="optin_template" :auto-focus="false" />
+        </b-field>
+
         <b-field :label="$t('globals.terms.tags')" label-position="on-border">
           <b-taginput v-model="form.tags" name="tags" ellipsis icon="tag-outline"
             :placeholder="$t('globals.terms.tags')" />
@@ -99,12 +104,14 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 import CopyText from '../components/CopyText.vue';
+import CodeEditor from '../components/CodeEditor.vue';
 
 export default Vue.extend({
   name: 'ListForm',
 
   components: {
     CopyText,
+    CodeEditor,
   },
 
   props: {
@@ -115,6 +122,12 @@ export default Vue.extend({
   data() {
     return {
       testingWebhook: false,
+      templateHelp: 'Custom HTML for the double opt-in confirmation e-mail. '
+        + 'Leave empty to use the built-in template. '
+        + 'Available: {{ .Subscriber.FirstName }}, {{ .OptinURL }}, {{ .UnsubURL }}, '
+        + '{{ .Lists }}, {{ .SiteName }}, L.Ts "email.optin.confirmSub", RootURL. '
+        + 'The shared {{ template "header" . }} and {{ template "footer" . }} partials '
+        + 'can be included. If a subscriber joins multiple lists, the first list\'s template is sent.',
       // Binds form input values.
       form: this.blankForm(),
     };
@@ -141,11 +154,15 @@ export default Vue.extend({
         tags: [],
         webhookUrl: '',
         webhookSecret: '',
+        optinTemplate: '',
       };
     },
 
     resetForm(data) {
       this.form = { ...this.blankForm(), ...data };
+      // The API returns snake_case fields; bind the per-list opt-in
+      // template explicitly so it round-trips correctly.
+      this.form.optinTemplate = data.optin_template || '';
       // Secrets are write-only: never carry a previously typed value over.
       this.form.webhookSecret = '';
     },
@@ -164,6 +181,7 @@ export default Vue.extend({
         ...this.form,
         webhook_url: this.form.webhookUrl,
         webhook_secret: this.form.webhookSecret,
+        optin_template: this.form.optinTemplate,
       };
       this.$api.createList(payload).then((data) => {
         this.$emit('finished');
@@ -178,6 +196,7 @@ export default Vue.extend({
         ...this.form,
         webhook_url: this.form.webhookUrl,
         webhook_secret: this.form.webhookSecret,
+        optin_template: this.form.optinTemplate,
       };
       this.$api.updateList(payload).then((data) => {
         this.$emit('finished');
@@ -224,3 +243,12 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.code-editor {
+  // The list modal is much smaller than the template modal, so cap the
+  // editor height instead of the global 65vh.
+  height: 30vh;
+  min-height: 220px;
+}
+</style>

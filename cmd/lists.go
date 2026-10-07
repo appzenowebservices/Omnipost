@@ -127,10 +127,18 @@ func (a *App) UpdateList(c echo.Context) error {
 	}
 
 	// Incoming params.
-	var l models.List
-	if err := c.Bind(&l); err != nil {
+	// Bind into a wrapper to distinguish an explicitly provided
+	// optin_template (including an empty one that resets the list to the
+	// built-in confirmation e-mail) from the field being absent, in which
+	// case the saved template is kept.
+	var req struct {
+		models.List
+		OptinTemplate *string `json:"optin_template"`
+	}
+	if err := c.Bind(&req); err != nil {
 		return err
 	}
+	l := req.List
 
 	// Validate.
 	if !strHasLen(l.Name, 1, stdInputMaxLen) {
@@ -141,7 +149,7 @@ func (a *App) UpdateList(c echo.Context) error {
 	}
 
 	// Update the list in the DB.
-	out, err := a.core.UpdateList(id, l)
+	out, err := a.core.UpdateList(id, l, req.OptinTemplate)
 	if err != nil {
 		return err
 	}

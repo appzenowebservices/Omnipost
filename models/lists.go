@@ -32,6 +32,10 @@ type List struct {
 	WebhookURL    string `db:"webhook_url" json:"webhook_url"`
 	WebhookSecret string `db:"-" json:"webhook_secret,omitempty"`
 
+	// Optional custom double opt-in confirmation e-mail template body.
+	// Empty means the built-in system template (subscriber-optin) is used.
+	OptinTemplate string `db:"optin_template" json:"optin_template,omitempty"`
+
 	SubscriberCount  int          `db:"subscriber_count" json:"subscriber_count"`
 	SubscriberCounts StringIntMap `db:"subscriber_statuses" json:"subscriber_statuses"`
 	SubscriberID     int          `db:"subscriber_id" json:"-"`

@@ -180,7 +180,7 @@ func (c *Core) CreateList(l models.List) (models.List, error) {
 	// Insert and read ID.
 	var newID int
 	l.UUID = uu.String()
-	if err := c.q.CreateList.Get(&newID, l.UUID, l.Name, l.Type, l.Optin, l.Status, pq.StringArray(normalizeTags(l.Tags)), l.Description, l.WebhookURL, l.WebhookSecret); err != nil {
+	if err := c.q.CreateList.Get(&newID, l.UUID, l.Name, l.Type, l.Optin, l.Status, pq.StringArray(normalizeTags(l.Tags)), l.Description, l.WebhookURL, l.WebhookSecret, l.OptinTemplate); err != nil {
 		c.log.Printf("error creating list: %v", err)
 		return models.List{}, echo.NewHTTPError(http.StatusInternalServerError,
 			c.i18n.Ts("globals.messages.errorCreating", "name", "{globals.terms.list}", "error", pqErrMsg(err)))
@@ -189,9 +189,12 @@ func (c *Core) CreateList(l models.List) (models.List, error) {
 	return c.GetList(newID, "")
 }
 
-// UpdateList updates a given list.
-func (c *Core) UpdateList(id int, l models.List) (models.List, error) {
-	res, err := c.q.UpdateList.Exec(id, l.Name, l.Type, l.Optin, l.Status, pq.StringArray(normalizeTags(l.Tags)), l.Description, l.WebhookURL, l.WebhookSecret)
+// UpdateList updates a given list. optinTemplate is a nil pointer when the
+// custom opt-in template should be left untouched, and a pointer to the new
+// value (which may be an empty string that resets to the default template)
+// otherwise.
+func (c *Core) UpdateList(id int, l models.List, optinTemplate *string) (models.List, error) {
+	res, err := c.q.UpdateList.Exec(id, l.Name, l.Type, l.Optin, l.Status, pq.StringArray(normalizeTags(l.Tags)), l.Description, l.WebhookURL, l.WebhookSecret, optinTemplate)
 	if err != nil {
 		c.log.Printf("error updating list: %v", err)
 		return models.List{}, echo.NewHTTPError(http.StatusInternalServerError,

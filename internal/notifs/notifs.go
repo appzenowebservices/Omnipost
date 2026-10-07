@@ -78,8 +78,57 @@ func Notify(toEmails []string, subject, tplName string, data any, hdr textproto.
 		no.lo.Printf("error compiling notification template '%s': %v", tplName, err)
 		return err
 	}
-	body := buf.Bytes()
 
+	return push(toEmails, subject, buf.Bytes(), hdr)
+}
+
+// NotifyCustomTpl sends out an e-mail notification rendered from an arbitrary
+// template body. The body is executed against the same function map and
+// template set as the built-in system templates, so it can use helpers such as
+// RootURL and L, and include the shared {{ template "header" . }} and
+// {{ template "footer" . }} partials. If the body renders no output (for
+// example, it wraps everything in a {{ define "subscriber-optin" }} block),
+// rootTpl is executed instead.
+func NotifyCustomTpl(toEmails []string, subject, rootTpl, body string, data any, hdr textproto.MIMEHeader) error {
+	if len(toEmails) == 0 {
+		return nil
+	}
+
+	// Clone the system templates to get access to the shared header, footer,
+	// i18n helpers and other definitions.
+	tpls, err := Tpls.Clone()
+	if err != nil {
+		return err
+	}
+
+	const name = "__custom_notification__"
+	if _, err := tpls.New(name).Parse(body); err != nil {
+		no.lo.Printf("error compiling custom notification template: %v", err)
+		return err
+	}
+
+	var buf bytes.Buffer
+	if err := tpls.ExecuteTemplate(&buf, name, data); err != nil {
+		no.lo.Printf("error executing custom notification template: %v", err)
+		return err
+	}
+
+	// The body produced no output. If it redefined the built-in template
+	// (e.g. a copied whole system template with its {{ define }} wrapper),
+	// execute that.
+	if len(bytes.TrimSpace(buf.Bytes())) == 0 && rootTpl != "" {
+		buf.Reset()
+		if err := tpls.ExecuteTemplate(&buf, rootTpl, data); err != nil {
+			no.lo.Printf("error executing fallback notification template '%s': %v", rootTpl, err)
+			return err
+		}
+	}
+
+	return push(toEmails, subject, buf.Bytes(), hdr)
+}
+
+// push renders the final subject and sends the message out via the messenger.
+func push(toEmails []string, subject string, body []byte, hdr textproto.MIMEHeader) error {
 	subject, body = GetTplSubject(subject, body)
 
 	m := models.Message{

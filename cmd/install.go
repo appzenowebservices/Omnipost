@@ -151,6 +151,7 @@ func installLists(q *models.Queries) (int, int) {
 		"",
 		"",
 		"",
+		"",
 	); err != nil {
 		lo.Fatalf("error creating list: %v", err)
 	}
@@ -161,6 +162,7 @@ func installLists(q *models.Queries) (int, int) {
 		models.ListOptinDouble,
 		models.ListStatusActive,
 		pq.StringArray{"test"},
+		"",
 		"",
 		"",
 		"",
