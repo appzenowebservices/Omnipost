@@ -16,13 +16,14 @@ import {
 } from '@codemirror/commands';
 import { defaultHighlightStyle, syntaxHighlighting, bracketMatching } from '@codemirror/language';
 import { search, searchKeymap, highlightSelectionMatches } from '@codemirror/search';
-import { vsCodeLight } from './editor-theme';
+import { vsCodeDark } from './editor-theme';
 
 export default {
   props: {
     value: { type: String, default: '' },
     lang: { type: String, default: 'html' },
     disabled: Boolean,
+    autoFocus: { type: Boolean, default: true },
   },
 
   data() {
@@ -87,7 +88,7 @@ export default {
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         EditorView.lineWrapping,
 
-        vsCodeLight,
+        vsCodeDark,
 
         search({
           top: true, // Places the search panel at the top of the editor
@@ -105,6 +106,9 @@ export default {
     });
 
     this.$nextTick(() => {
+      if (!this.autoFocus) {
+        return;
+      }
       window.setTimeout(() => {
         this.editor.focus();
       }, 100);
