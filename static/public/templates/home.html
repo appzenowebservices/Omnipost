@@ -2,34 +2,67 @@
 {{ template "header" .}}
 
 <section class="landing">
-	<div class="landing-hero">
-		<span class="login-brand-badge"><img src="/public/static/logo.png?v={{ .AssetVersion }}" alt="{{ .SiteName }}" /></span>
-		<h1>{{ .SiteName }}</h1>
-		<p class="landing-tagline">Newsletters, mailing lists and web-push &mdash; self-hosted, all in one place.</p>
-		<p class="landing-cta"><a href="admin" class="button button-accent">{{ L.T "users.login" }}</a></p>
-		<div class="landing-links">
+	<nav class="landing-nav">
+		<a class="landing-nav-brand" href="/">
+			<span class="landing-nav-badge"><img src="/public/static/logo.png?v={{ .AssetVersion }}" alt="{{ .SiteName }}" /></span>
+			<span class="landing-nav-name">{{ .SiteName }}</span>
+		</a>
+		<div class="landing-nav-actions">
 			{{ if .EnablePublicSubPage }}
-				<a href="{{ .RootURL }}/subscription/form">{{ L.T "public.sub" }}</a>
+				<a class="landing-nav-link" href="{{ .RootURL }}/subscription/form">{{ L.T "public.sub" }}</a>
 			{{ end }}
 			{{ if .EnablePublicArchive }}
-			    <a href="{{ .RootURL }}/archive">{{ L.T "public.archiveTitle" }}</a>
+				<a class="landing-nav-link" href="{{ .RootURL }}/archive">{{ L.T "public.archiveTitle" }}</a>
+			{{ end }}
+			<a class="button button-accent landing-nav-cta" href="admin">{{ L.T "users.login" }}</a>
+		</div>
+	</nav>
+
+	<div class="landing-hero">
+		<div class="landing-glow landing-glow-a"></div>
+		<div class="landing-glow landing-glow-b"></div>
+		<div class="landing-grid"></div>
+
+		<div class="landing-hero-inner">
+			<span class="landing-eyebrow"><span class="landing-dot"></span> Newsletters &middot; Lists &middot; Web push</span>
+			<h1>{{ .SiteName }}</h1>
+			<p class="landing-tagline">Newsletters, mailing lists and web-push &mdash; self-hosted, all in one place.</p>
+			<div class="landing-cta">
+				<a href="admin" class="button button-accent">{{ L.T "users.login" }}</a>
+				{{ if .EnablePublicSubPage }}
+					<a href="{{ .RootURL }}/subscription/form" class="button landing-btn-ghost">{{ L.T "public.sub" }}</a>
+				{{ end }}
+			</div>
+			{{ if .EnablePublicArchive }}
+				<p class="landing-archive"><a href="{{ .RootURL }}/archive">{{ L.T "public.archiveTitle" }} &rarr;</a></p>
 			{{ end }}
 		</div>
 	</div>
 
+	<div class="landing-section-head">
+		<span class="landing-kicker">Platform</span>
+		<h2>Everything you need to reach your audience</h2>
+	</div>
+
 	<div class="landing-features">
 		<div class="landing-feature">
-			<span class="landing-num">01</span>
+			<span class="landing-icon">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+			</span>
 			<h3>Campaigns</h3>
 			<p>Compose once, track opens, clicks and bounces with built-in analytics.</p>
 		</div>
 		<div class="landing-feature">
-			<span class="landing-num">02</span>
+			<span class="landing-icon">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
+			</span>
 			<h3>Lists &amp; forms</h3>
 			<p>Segments, opt-in flows and ready-made subscription pages.</p>
 		</div>
 		<div class="landing-feature">
-			<span class="landing-num">03</span>
+			<span class="landing-icon">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/><path d="M7.76 16.25a6 6 0 0 1 0-8.49"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 19.07a10 10 0 0 1 0-14.14"/></svg>
+			</span>
 			<h3>Channels</h3>
 			<p>SMTP e-mail and browser web-push, managed from one dashboard.</p>
 		</div>
