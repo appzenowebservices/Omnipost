@@ -53,7 +53,7 @@ SELECT id, uuid, type FROM lists WHERE
     END);
 
 -- name: create-list
-INSERT INTO lists (uuid, name, type, optin, status, tags, description, webhook_url, webhook_secret, optin_template) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id;
+INSERT INTO lists (uuid, name, type, optin, status, tags, description, webhook_url, webhook_secret, optin_template, optin_template_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id;
 
 -- name: update-list
 WITH l AS (
@@ -67,6 +67,7 @@ WITH l AS (
         webhook_url=(CASE WHEN $8 != '' THEN $8 ELSE webhook_url END),
         webhook_secret=(CASE WHEN $9 != '' THEN $9 ELSE webhook_secret END),
         optin_template=(CASE WHEN $10::TEXT IS NOT NULL THEN $10::TEXT ELSE optin_template END),
+        optin_template_id=(CASE WHEN $11::BOOLEAN THEN NULLIF($12::INTEGER, 0) ELSE optin_template_id END),
         updated_at=NOW()
     WHERE id = $1
     RETURNING id, name

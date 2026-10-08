@@ -15,6 +15,7 @@ const (
 	TemplateTypeCampaign       = "campaign"
 	TemplateTypeCampaignVisual = "campaign_visual"
 	TemplateTypeTx             = "tx"
+	TemplateTypeOptin          = "optin"
 )
 
 // Template represents a reusable e-mail template.

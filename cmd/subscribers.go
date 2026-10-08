@@ -900,10 +900,31 @@ func makeOptinNotifyHook(unsubHeader bool, u *UrlConfig, q *models.Queries, i *i
 		// system template. If the subscriber is being added to multiple
 		// double opt-in lists, the first list (in query order) that has a
 		// custom template wins, as a single confirmation e-mail is sent.
-		var tplBody string
+		var (
+			tplBody string
+			tplName string
+		)
 		for _, l := range lists {
+			// Preferred: a saved template from the Templates UI.
+			if l.OptinTemplateID.Valid && l.OptinTemplateID.Int > 0 {
+				var tpls []models.Template
+				if err := q.GetTemplates.Select(&tpls, l.OptinTemplateID.Int, false, ""); err != nil {
+					lo.Printf("error loading opt-in template %d for list %q: %v", l.OptinTemplateID.Int, l.Name, err)
+					continue
+				}
+				if len(tpls) == 0 {
+					lo.Printf("opt-in template %d for list %q not found, falling back", l.OptinTemplateID.Int, l.Name)
+					continue
+				}
+				tplBody = tpls[0].Body
+				tplName = tpls[0].Name
+				break
+			}
+
+			// Legacy: an inline HTML body stored on the list itself.
 			if strings.TrimSpace(l.OptinTemplate) != "" {
 				tplBody = l.OptinTemplate
+				tplName = "inline"
 				break
 			}
 		}
@@ -915,11 +936,14 @@ func makeOptinNotifyHook(unsubHeader bool, u *UrlConfig, q *models.Queries, i *i
 		var sendErr error
 		if tplBody == "" {
 			sendErr = sendDefault()
-		} else if sendErr = notifs.NotifyCustomTpl([]string{sub.Email}, i.T("subscribers.optinSubject"), notifs.TplSubscriberOptin, tplBody, out, hdr); sendErr != nil {
-			// Never block the opt-in flow on a broken custom template;
-			// fall back to the built-in one.
-			lo.Printf("error rendering custom opt-in template for subscriber %d (%s), falling back to the default: %s", sub.ID, sub.UUID, sendErr)
-			sendErr = sendDefault()
+		} else {
+			lo.Printf("opt-in: using template %q for subscriber %d (%s)", tplName, sub.ID, sub.Email)
+			if sendErr = notifs.NotifyCustomTpl([]string{sub.Email}, i.T("subscribers.optinSubject"), notifs.TplSubscriberOptin, tplBody, out, hdr); sendErr != nil {
+				// Never block the opt-in flow on a broken custom template;
+				// fall back to the built-in one.
+				lo.Printf("error rendering custom opt-in template for subscriber %d (%s), falling back to the default: %s", sub.ID, sub.UUID, sendErr)
+				sendErr = sendDefault()
+			}
 		}
 		if sendErr != nil {
 			lo.Printf("error sending opt-in e-mail for subscriber %d (%s): %s", sub.ID, sub.UUID, sendErr)

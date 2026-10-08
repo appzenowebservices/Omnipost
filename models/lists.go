@@ -34,7 +34,12 @@ type List struct {
 
 	// Optional custom double opt-in confirmation e-mail template body.
 	// Empty means the built-in system template (subscriber-optin) is used.
+	// Deprecated: superseded by OptinTemplateID.
 	OptinTemplate string `db:"optin_template" json:"optin_template,omitempty"`
+
+	// Optional saved template (Templates UI) used for the double opt-in
+	// confirmation e-mail. NULL/0 means the built-in system template is used.
+	OptinTemplateID null.Int `db:"optin_template_id" json:"optin_template_id"`
 
 	SubscriberCount  int          `db:"subscriber_count" json:"subscriber_count"`
 	SubscriberCounts StringIntMap `db:"subscriber_statuses" json:"subscriber_statuses"`

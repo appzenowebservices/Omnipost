@@ -46,6 +46,11 @@ var (
 
 	Tpls *template.Template
 	no   *Notifs
+
+	// tplsPristine is a never-executed copy of Tpls. html/template cannot be
+	// cloned after execution, but custom per-list templates need a fresh
+	// clone of the system set (header/footer/i18n helpers) on every send.
+	tplsPristine *template.Template
 )
 
 // Initialize returns a new Notifs instance.
@@ -55,6 +60,14 @@ func Initialize(opt Opt, tpls *template.Template, em *email.Emailer, lo *log.Log
 	}
 
 	Tpls = tpls
+
+	// Keep a pristine copy for NotifyCustomTpl() to clone from.
+	if p, err := tpls.Clone(); err == nil {
+		tplsPristine = p
+	} else {
+		lo.Printf("warning: could not create pristine template copy for custom templates: %v", err)
+	}
+
 	no = &Notifs{
 		opt: opt,
 		em:  em,
@@ -95,8 +108,14 @@ func NotifyCustomTpl(toEmails []string, subject, rootTpl, body string, data any,
 	}
 
 	// Clone the system templates to get access to the shared header, footer,
-	// i18n helpers and other definitions.
-	tpls, err := Tpls.Clone()
+	// i18n helpers and other definitions. Clone from the pristine copy:
+	// html/template cannot be cloned after it has been executed, and the
+	// system set is executed by every other notification.
+	src := Tpls
+	if tplsPristine != nil {
+		src = tplsPristine
+	}
+	tpls, err := src.Clone()
 	if err != nil {
 		return err
 	}

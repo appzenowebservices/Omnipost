@@ -7,7 +7,7 @@ DROP TYPE IF EXISTS campaign_status CASCADE; CREATE TYPE campaign_status AS ENUM
 DROP TYPE IF EXISTS campaign_type CASCADE; CREATE TYPE campaign_type AS ENUM ('regular', 'optin');
 DROP TYPE IF EXISTS content_type CASCADE; CREATE TYPE content_type AS ENUM ('richtext', 'html', 'plain', 'markdown', 'visual');
 DROP TYPE IF EXISTS bounce_type CASCADE; CREATE TYPE bounce_type AS ENUM ('soft', 'hard', 'complaint');
-DROP TYPE IF EXISTS template_type CASCADE; CREATE TYPE template_type AS ENUM ('campaign', 'campaign_visual', 'tx');
+DROP TYPE IF EXISTS template_type CASCADE; CREATE TYPE template_type AS ENUM ('campaign', 'campaign_visual', 'tx', 'optin');
 DROP TYPE IF EXISTS user_type CASCADE; CREATE TYPE user_type AS ENUM ('user', 'api');
 DROP TYPE IF EXISTS user_status CASCADE; CREATE TYPE user_status AS ENUM ('enabled', 'disabled');
 DROP TYPE IF EXISTS role_type CASCADE; CREATE TYPE role_type AS ENUM ('user', 'list');
@@ -53,7 +53,13 @@ CREATE TABLE lists (
 
     -- Optional custom double opt-in confirmation e-mail template.
     -- Empty means the built-in system template (subscriber-optin) is used.
+    -- Deprecated: superseded by optin_template_id.
     optin_template  TEXT NOT NULL DEFAULT '',
+
+    -- Optional saved template (Templates UI) for the double opt-in
+    -- confirmation e-mail. NULL means the built-in system template is used.
+    -- FK added after the templates table below.
+    optin_template_id INTEGER,
 
     created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -97,6 +103,12 @@ CREATE TABLE templates (
     updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 CREATE UNIQUE INDEX ON templates (is_default) WHERE is_default = true;
+
+-- lists.optin_template_id -> templates(id), added here because templates is
+-- created after lists.
+ALTER TABLE lists
+    ADD CONSTRAINT lists_optin_template_id_fkey
+    FOREIGN KEY (optin_template_id) REFERENCES templates(id) ON DELETE SET NULL;
 
 
 -- campaigns

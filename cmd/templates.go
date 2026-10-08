@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"html/template"
 	"net/http"
@@ -254,6 +255,31 @@ func (a *App) previewTemplate(tpl models.Template) ([]byte, error) {
 				a.i18n.Ts("templates.errorRendering", "error", err.Error()))
 		}
 		out = msg.Body()
+	} else if tpl.Type == models.TemplateTypeOptin {
+		// Opt-in confirmation e-mail: rendered with the same data context the
+		// per-list confirmation e-mails receive (.Lists, .OptinURL, ...).
+		if err := tpl.Compile(a.manager.GenericTemplateFuncs()); err != nil {
+			return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+
+		dummy := subOptin{
+			Subscriber: dummySubscriber,
+			SiteName:   a.cfg.SiteName,
+			OptinURL:   "https://example.com/subscription/optin/" + dummyUUID + "?l=" + dummyUUID,
+			UnsubURL:   "https://example.com/subscription/" + dummyUUID + "/" + dummyUUID,
+			Lists: []models.List{{
+				UUID: dummyUUID,
+				Name: a.i18n.T("templates.dummyName"),
+				Type: models.ListTypePublic,
+			}},
+		}
+
+		var b bytes.Buffer
+		if err := tpl.Tpl.ExecuteTemplate(&b, models.BaseTpl, dummy); err != nil {
+			return nil, echo.NewHTTPError(http.StatusBadRequest,
+				a.i18n.Ts("templates.errorRendering", "error", err.Error()))
+		}
+		out = b.Bytes()
 	} else {
 		// Compile transactional template.
 		if err := tpl.Compile(a.manager.GenericTemplateFuncs()); err != nil {

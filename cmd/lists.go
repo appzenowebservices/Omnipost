@@ -127,13 +127,14 @@ func (a *App) UpdateList(c echo.Context) error {
 	}
 
 	// Incoming params.
-	// Bind into a wrapper to distinguish an explicitly provided
-	// optin_template (including an empty one that resets the list to the
-	// built-in confirmation e-mail) from the field being absent, in which
-	// case the saved template is kept.
+	// Bind into a wrapper to distinguish an explicitly provided template
+	// selection (including 0, which resets the list to the built-in
+	// confirmation e-mail) from the field being absent, in which case the
+	// saved selection is kept.
 	var req struct {
 		models.List
-		OptinTemplate *string `json:"optin_template"`
+		OptinTemplate   *string `json:"optin_template"`
+		OptinTemplateID *int    `json:"optin_template_id"`
 	}
 	if err := c.Bind(&req); err != nil {
 		return err
@@ -149,7 +150,7 @@ func (a *App) UpdateList(c echo.Context) error {
 	}
 
 	// Update the list in the DB.
-	out, err := a.core.UpdateList(id, l, req.OptinTemplate)
+	out, err := a.core.UpdateList(id, l, req.OptinTemplate, req.OptinTemplateID)
 	if err != nil {
 		return err
 	}
