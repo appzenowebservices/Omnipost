@@ -44,14 +44,18 @@ type App struct {
 	emailMsgr  manager.Messenger
 	importer   *subimporter.Importer
 	auth       *auth.Auth
-	media      media.Store
-	bounce     *bounce.Manager
-	captcha    *captcha.Captcha
-	i18n       *i18n.I18n
-	pg         *paginator.Paginator
-	events     *events.Events
-	log        *log.Logger
-	bufLog     *buflog.BufLog
+
+	// Virtual Super Admin from environment variables (never stored in the DB).
+	envAdmin *auth.User
+
+	media   media.Store
+	bounce  *bounce.Manager
+	captcha *captcha.Captcha
+	i18n    *i18n.I18n
+	pg      *paginator.Paginator
+	events  *events.Events
+	log     *log.Logger
+	bufLog  *buflog.BufLog
 
 	about         about
 	fnOptinNotify func(models.Subscriber, []int) (int, error)
@@ -232,8 +236,10 @@ func main() {
 		// Bulk importer.
 		importer = initImporter(queries, db, core, i18n, ko)
 
-		// Initialize the auth manager.
-		hasUsers, auth = initAuth(core, db.DB, ko)
+		// Initialize the auth manager. The environment-configured super admin,
+		// if any, is virtual and resolves before the DB lookup.
+		envAdmin       = loadEnvSuperAdmin(cfg.Permissions)
+		hasUsers, auth = initAuth(core, db.DB, ko, envAdmin)
 
 		// Initialize the webhook/POP3 bounce processor.
 		bounce *bounce.Manager
@@ -289,6 +295,7 @@ func main() {
 		emailMsgr:  emailMsgr,
 		importer:   importer,
 		auth:       auth,
+		envAdmin:   envAdmin,
 		media:      media,
 		bounce:     bounce,
 		captcha:    initCaptcha(),

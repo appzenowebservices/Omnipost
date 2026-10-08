@@ -313,8 +313,10 @@ SELECT COUNT(*) AS total FROM subscribers
 
 -- name: query-subscribers-count-all
 -- Cached query for getting the "all" subscriber count without arbitrary conditions.
+-- An empty list IDs array means "no list filter" (super admin / get_all), in
+-- which case the count spans every list.
 SELECT COALESCE(SUM(subscriber_count), 0) AS total FROM mat_list_subscriber_stats
-    WHERE list_id = ANY(CASE WHEN CARDINALITY($1::INT[]) > 0 THEN $1 ELSE '{0}' END)
+    WHERE list_id = ANY(CASE WHEN CARDINALITY($1::INT[]) > 0 THEN $1::INT[] ELSE (SELECT ARRAY_AGG(id) FROM lists) END)
     AND ($2 = '' OR status = $2::subscription_status);
 
 -- name: query-subscribers-for-export

@@ -1138,7 +1138,8 @@ func initTplFuncs(i *i18n.I18n, u *UrlConfig) template.FuncMap {
 }
 
 // initAuth initializes the auth module with the given DB connection and
-func initAuth(co *core.Core, db *sql.DB, ko *koanf.Koanf) (bool, *auth.Auth) {
+// virtual environment super admin user (nil when not configured).
+func initAuth(co *core.Core, db *sql.DB, ko *koanf.Koanf, envAdmin *auth.User) (bool, *auth.Auth) {
 	var oidcCfg auth.OIDCConfig
 
 	// If OIDC is enabled, set up the OIDC config.
@@ -1169,6 +1170,11 @@ func initAuth(co *core.Core, db *sql.DB, ko *koanf.Koanf) (bool, *auth.Auth) {
 			return nil
 		},
 		GetUser: func(id int) (auth.User, error) {
+			// The environment super admin is not in the users table.
+			if envAdmin != nil && id == envAdmin.ID {
+				return *envAdmin, nil
+			}
+
 			return co.GetUser(id, "", "")
 		},
 	}
@@ -1183,6 +1189,13 @@ func initAuth(co *core.Core, db *sql.DB, ko *koanf.Koanf) (bool, *auth.Auth) {
 	hasUsers, err := cacheUsers(co, a)
 	if err != nil {
 		lo.Fatalf("error loading API users to cache: %v", err)
+	}
+
+	// An environment-configured super admin counts as an existing user, so the
+	// first-time setup page is skipped and the regular login form is shown.
+	if envAdmin != nil {
+		hasUsers = true
+		lo.Printf("super admin login enabled from environment (user: %s, not stored in the users table)", envAdmin.Username)
 	}
 
 	// If the legacy username+password is set in the TOML file, use that as an API

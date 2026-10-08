@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/subtle"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -446,6 +447,57 @@ func (a *App) createOIDCUser(claims auth.OIDCclaim, c echo.Context) (auth.User, 
 	return user, err
 }
 
+// envSuperAdminID is the sentinel in-memory ID of the environment-configured
+// super admin. It's intentionally outside the range of DB-generated IDs.
+const envSuperAdminID = 2147483647
+
+// loadEnvSuperAdmin returns a virtual Super Admin defined purely by
+// environment variables (PATRA_ADMIN_USER / PATRA_ADMIN_PASSWORD, falling back
+// to LISTMONK_ADMIN_USER / LISTMONK_ADMIN_PASSWORD). It is never written to the
+// users table, which stays reserved for tenant users. When configured, it
+// counts as an existing user (no first-time setup page) and signs in through
+// the regular login form. Returns nil when no credentials are configured.
+// perms is the full permission set (cfg.Permissions), granted so that
+// permission-map based code paths treat it as a full super admin, exactly like
+// a DB-backed super admin loaded from the users table.
+func loadEnvSuperAdmin(perms map[string]struct{}) *auth.User {
+	username := firstEnv("PATRA_ADMIN_USER", "LISTMONK_ADMIN_USER")
+	password := firstEnv("PATRA_ADMIN_PASSWORD", "LISTMONK_ADMIN_PASSWORD")
+
+	if username == "" && password == "" {
+		return nil
+	}
+	if len(username) < 3 || len(password) < 8 {
+		lo.Printf("ignoring PATRA_ADMIN_USER/PATRA_ADMIN_PASSWORD: username must be >= 3 and password >= 8 characters")
+		return nil
+	}
+
+	u := auth.User{
+		Base:          auth.Base{ID: envSuperAdminID},
+		Username:      username,
+		Name:          username,
+		Password:      null.String{Valid: true, String: auth.HashAPIToken(password)},
+		PasswordLogin: true,
+		HasPassword:   true,
+		Status:        auth.UserStatusEnabled,
+		Type:          auth.UserTypeUser,
+		UserRoleID:    auth.SuperAdminRoleID,
+	}
+	u.UserRole.ID = auth.SuperAdminRoleID
+	u.UserRole.Name = "Super Admin"
+
+	if len(perms) > 0 {
+		u.PermissionsMap = make(map[string]struct{}, len(perms))
+		u.UserRole.Permissions = make([]string, 0, len(perms))
+		for p := range perms {
+			u.PermissionsMap[p] = struct{}{}
+			u.UserRole.Permissions = append(u.UserRole.Permissions, p)
+		}
+	}
+
+	return &u
+}
+
 // doLogin logs a user in with a username and password.
 func (a *App) doLogin(c echo.Context) error {
 	var (
@@ -468,9 +520,17 @@ func (a *App) doLogin(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, a.i18n.Ts("globals.messages.invalidFields", "name", "password"))
 	}
 
-	// Log the user in by fetching and verifying credentials from the DB.
-	user, err := a.core.LoginUser(username, password)
-	if err != nil {
+	// Match the environment-configured super admin first, then fall back to
+	// credentials in the users table.
+	var (
+		user auth.User
+		err  error
+	)
+	if a.envAdmin != nil &&
+		username == a.envAdmin.Username &&
+		subtle.ConstantTimeCompare([]byte(auth.HashAPIToken(password)), []byte(a.envAdmin.Password.String)) == 1 {
+		user = *a.envAdmin
+	} else if user, err = a.core.LoginUser(username, password); err != nil {
 		return err
 	}
 

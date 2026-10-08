@@ -1,6 +1,6 @@
 {{ define "optin" }}
 {{ template "header" .}}
-<section>
+<section class="optin">
     <h2>{{ L.T "public.confirmSubTitle" }}</h2>
     <p>
         {{ L.T "public.confirmSubInfo" }}
@@ -17,7 +17,7 @@
                 {{ end }}
             {{ end }}
         </ul>
-        <p>
+        <p class="submit">
             <input type="hidden" name="confirm" value="true" />
             <button type="submit" class="button" id="btn-unsub">
                 {{ L.Ts "public.confirmSub" }}
