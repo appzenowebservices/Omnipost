@@ -38,6 +38,9 @@
           :data-cy="`type-${props.row.type}`">
           {{ $tc('templates.typeCampaignVisual') }}
         </b-tag>
+        <b-tag v-else-if="props.row.type === 'optin'" :class="props.row.type" :data-cy="`type-${props.row.type}`">
+          {{ $tc('templates.typeOptin') }}
+        </b-tag>
         <b-tag v-else :class="props.row.type" :data-cy="`type-${props.row.type}`">
           {{ $tc('templates.typeTransactional') }}
         </b-tag>

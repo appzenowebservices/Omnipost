@@ -1,7 +1,7 @@
 describe('Templates', () => {
   it('Opens templates page', () => {
     cy.resetDB();
-    cy.loginAndVisit('/admin/campaigns/templates');
+    cy.loginAndVisit('/admin/templates');
   });
 
   it('Counts default templates', () => {

@@ -34,13 +34,14 @@
         :active="activeItem.campaign" data-cy="new-campaign" icon="plus" :label="$t('menu.newCampaign')" />
       <b-menu-item v-if="$can('media:*')" :to="{ name: 'media' }" tag="router-link" :active="activeItem.media"
         data-cy="media" icon="image-outline" :label="$t('menu.media')" />
-      <b-menu-item v-if="$can('templates:get')" :to="{ name: 'templates' }" tag="router-link"
-        :active="activeItem.templates" data-cy="templates" icon="file-image-outline"
-        :label="$t('globals.terms.templates')" />
       <b-menu-item v-if="$can('campaigns:get_analytics')" :to="{ name: 'campaignAnalytics' }" tag="router-link"
         :active="activeItem.campaignAnalytics" data-cy="analytics" icon="chart-bar"
         :label="$t('globals.terms.analytics')" />
     </b-menu-item><!-- campaigns -->
+
+    <b-menu-item v-if="$can('templates:get')" :to="{ name: 'templates' }" tag="router-link"
+      :active="activeItem.templates" data-cy="templates" icon="file-image-outline"
+      :label="$t('globals.terms.templates')" /><!-- templates -->
 
     <b-menu-item v-if="$can('users:*', 'roles:*')" :expanded="activeGroup.users" :active="activeGroup.users"
       data-cy="users" @update:active="(state) => toggleGroup('users', state)" icon="account-multiple"

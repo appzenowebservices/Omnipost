@@ -21,6 +21,26 @@
           </b-select>
         </b-field>
 
+        <!-- Copy a saved e-mail template (transactional/opt-in) into the content. -->
+        <b-field v-if="['richtext', 'html'].includes(self.contentType)" :label="$t('campaigns.importTemplate')"
+          label-position="on-border" :message="$t('campaigns.importTemplateHelp')" class="ml-4 mb-0 import-template-field">
+          <b-select :placeholder="$t('globals.terms.none')" v-model="importTemplateId" name="import_template"
+            :disabled="disabled">
+            <option v-for="t in importableTemplates" :value="t.id" :key="t.id">
+              {{ t.name }}
+            </option>
+          </b-select>
+
+          <b-button :disabled="disabled || !importTemplateId" class="ml-3" @click="onImportTpl" type="is-primary"
+            icon-left="content-save-outline" data-cy="btn-import-content-tpl">
+            {{ $t('globals.terms.import') }}
+
+            <span class="spinner is-tiny" v-if="loading.templates">
+              <b-loading :is-full-page="false" active />
+            </span>
+          </b-button>
+        </b-field>
+
         <div v-else>
           <b-button v-if="!isVisualTplSelector" @click="onShowVisualTplSelector" type="is-ghost"
             icon-left="file-find-outline" data-cy="btn-select-visual-tpl">
@@ -130,6 +150,7 @@ export default {
       contentTypeSel: this.$props.value.contentType,
       templateId: null,
       visualTemplateId: null,
+      importTemplateId: null,
     };
   },
 
@@ -314,6 +335,38 @@ export default {
       );
     },
 
+    // Copies a saved e-mail template's body into the campaign content so it
+    // can be customized. Full standalone e-mails (transactional/opt-in) carry
+    // their own layout, so the wrapper template is cleared for them.
+    onImportTpl() {
+      if (!this.importTemplateId) {
+        return;
+      }
+
+      const tpl = this.importableTemplates.find((t) => t.id === this.importTemplateId);
+
+      this.$utils.confirm(
+        this.$t('campaigns.confirmOverwriteContent'),
+        () => {
+          // Fetch the template body from the server.
+          this.$api.getTemplate(this.importTemplateId).then((data) => {
+            const body = data.body || '';
+            this.self.body = this.self.contentType === 'html' || this.self.contentType === 'richtext'
+              ? this.beautifyHTML(body)
+              : body;
+            this.self.bodySource = data.bodySource || null;
+
+            if (tpl && (tpl.type === 'tx' || tpl.type === 'optin')) {
+              this.templateId = null;
+              this.self.templateId = null;
+            }
+
+            this.$utils.toast(this.$t('campaigns.importedTemplate'));
+          });
+        },
+      );
+    },
+
     setDefaultTemplate() {
       if (this.self.contentType === 'visual') {
         this.visualTemplateId = this.validTemplates[0]?.id || null;
@@ -364,6 +417,12 @@ export default {
     validTemplates() {
       const typ = this.self.contentType === 'visual' ? 'campaign_visual' : 'campaign';
       return this.templates.filter((t) => (t.type === typ));
+    },
+
+    // Saved transactional/opt-in e-mail templates whose body can be copied
+    // into the campaign content ("import from template").
+    importableTemplates() {
+      return (this.templates || []).filter((t) => t.type === 'tx' || t.type === 'optin');
     },
   },
 

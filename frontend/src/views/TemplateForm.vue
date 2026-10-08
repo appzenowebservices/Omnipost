@@ -37,6 +37,9 @@
                   <option value="tx">
                     {{ $tc('templates.typeTransactional') }}
                   </option>
+                  <option value="optin">
+                    {{ $tc('templates.typeOptin') }}
+                  </option>
                 </b-select>
               </b-field>
             </div>

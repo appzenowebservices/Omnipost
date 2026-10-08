@@ -78,9 +78,9 @@ const routes = [
     component: () => import('../views/Media.vue'),
   },
   {
-    path: '/campaigns/templates',
+    path: '/templates',
     name: 'templates',
-    meta: { title: 'globals.terms.templates', group: 'campaigns' },
+    meta: { title: 'globals.terms.templates' },
     component: () => import('../views/Templates.vue'),
   },
   {

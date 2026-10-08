@@ -46,7 +46,10 @@
 
         <b-field v-if="form.optin === 'double'" label="Confirmation e-mail template"
           label-position="on-border" :message="templateHelp">
-          <code-editor lang="html" v-model="form.optinTemplate" name="optin_template" :auto-focus="false" />
+          <b-select v-model="form.optinTemplateId" name="optin_template_id" expanded>
+            <option :value="0">Built-in default</option>
+            <option v-for="t in templates" :key="t.id" :value="t.id">{{ t.name }}</option>
+          </b-select>
         </b-field>
 
         <b-field :label="$t('globals.terms.tags')" label-position="on-border">
@@ -104,14 +107,12 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 import CopyText from '../components/CopyText.vue';
-import CodeEditor from '../components/CodeEditor.vue';
 
 export default Vue.extend({
   name: 'ListForm',
 
   components: {
     CopyText,
-    CodeEditor,
   },
 
   props: {
@@ -122,12 +123,10 @@ export default Vue.extend({
   data() {
     return {
       testingWebhook: false,
-      templateHelp: 'Custom HTML for the double opt-in confirmation e-mail. '
-        + 'Leave empty to use the built-in template. '
-        + 'Available: {{ .Subscriber.FirstName }}, {{ .OptinURL }}, {{ .UnsubURL }}, '
-        + '{{ .Lists }}, {{ .SiteName }}, L.Ts "email.optin.confirmSub", RootURL. '
-        + 'The shared {{ template "header" . }} and {{ template "footer" . }} partials '
-        + 'can be included. If a subscriber joins multiple lists, the first list\'s template is sent.',
+      templates: [],
+      templateHelp: 'Pick an opt-in e-mail template (Templates in the sidebar) to use as this list\'s '
+        + 'double opt-in confirmation e-mail. "Built-in default" uses the system template. '
+        + 'If a subscriber joins multiple lists, the first list with a template wins.',
       // Binds form input values.
       form: this.blankForm(),
     };
@@ -154,7 +153,7 @@ export default Vue.extend({
         tags: [],
         webhookUrl: '',
         webhookSecret: '',
-        optinTemplate: '',
+        optinTemplateId: 0,
       };
     },
 
@@ -162,7 +161,7 @@ export default Vue.extend({
       this.form = { ...this.blankForm(), ...data };
       // The API returns snake_case fields; bind the per-list opt-in
       // template explicitly so it round-trips correctly.
-      this.form.optinTemplate = data.optin_template || '';
+      this.form.optinTemplateId = data.optin_template_id || 0;
       // Secrets are write-only: never carry a previously typed value over.
       this.form.webhookSecret = '';
     },
@@ -181,7 +180,7 @@ export default Vue.extend({
         ...this.form,
         webhook_url: this.form.webhookUrl,
         webhook_secret: this.form.webhookSecret,
-        optin_template: this.form.optinTemplate,
+        optin_template_id: this.form.optinTemplateId || 0,
       };
       this.$api.createList(payload).then((data) => {
         this.$emit('finished');
@@ -196,7 +195,7 @@ export default Vue.extend({
         ...this.form,
         webhook_url: this.form.webhookUrl,
         webhook_secret: this.form.webhookSecret,
-        optin_template: this.form.optinTemplate,
+        optin_template_id: this.form.optinTemplateId || 0,
       };
       this.$api.updateList(payload).then((data) => {
         this.$emit('finished');
@@ -240,15 +239,11 @@ export default Vue.extend({
     this.$nextTick(() => {
       this.$refs.focus.focus();
     });
+
+    // Opt-in e-mail templates that can be selected for the double opt-in e-mail.
+    this.$api.getTemplates().then((data) => {
+      this.templates = (data || []).filter((t) => ['optin', 'tx'].includes(t.type));
+    }).catch(() => {});
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.code-editor {
-  // The list modal is much smaller than the template modal, so cap the
-  // editor height instead of the global 65vh.
-  height: 30vh;
-  min-height: 220px;
-}
-</style>
