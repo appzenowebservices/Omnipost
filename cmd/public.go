@@ -81,6 +81,14 @@ type optinTpl struct {
 	optinReq
 }
 
+// optinSuccessTpl renders the post-confirmation page.
+type optinSuccessTpl struct {
+	publicTpl
+	SubUUID    string
+	Lists      []models.List
+	Subscriber models.Subscriber
+}
+
 type msgTpl struct {
 	publicTpl
 	MessageTitle string
@@ -421,8 +429,20 @@ func (a *App) confirmOptinSubscription(c echo.Context, subUUID string, listUUIDs
 	// Notify external lifecycle integrations. Async and never fails the page.
 	a.dispatchConfirmWebhooks(subUUID, lists)
 
-	return c.Render(http.StatusOK, tplMessage,
-		makeMsgTpl(a.i18n.T("public.subConfirmedTitle"), "", a.i18n.Ts("public.subConfirmed")))
+	// Render the branded success page. A failed subscriber lookup only costs
+	// the optional greeting; the confirmation itself has already succeeded.
+	sub, err := a.core.GetSubscriber(0, subUUID, "")
+	if err != nil {
+		a.log.Printf("error loading subscriber for optin success page: %v", err)
+	}
+
+	var out optinSuccessTpl
+	out.Title = a.i18n.T("public.subConfirmedTitle")
+	out.SubUUID = subUUID
+	out.Lists = lists
+	out.Subscriber = sub
+
+	return c.Render(http.StatusOK, "optin-success", out)
 }
 
 // SubscriptionFormPage handles subscription requests coming from public

@@ -62,26 +62,33 @@
             :placeholder="$t('globals.fields.description')" />
         </b-field>
 
-        <b-field label="Confirm webhook URL" label-position="on-border"
-          message="HTTPS endpoint notified when a subscriber confirms. Empty = disabled.">
-          <b-input :maxlength="2000" v-model="form.webhookUrl" name="webhook_url" type="url"
-            placeholder="https://example.com/hooks/omnipost-confirmed" />
-          <p v-if="isEditing" class="help" style="margin-top: 4px;">
-            Saved value:
-            <copy-text v-if="data.webhookUrl" :text="data.webhookUrl" />
-            <span v-else>—</span>
-          </p>
+        <b-field v-if="webhookViaEnv" label="Confirm webhook" label-position="on-border"
+          message="Configured in the server environment (PATRA_CONFIRM_WEBHOOKS) — no form configuration needed.">
+          <b-input value="Configured via environment" disabled />
         </b-field>
 
-        <b-field label="Confirm webhook secret" label-position="on-border"
-          message="HMAC signing secret. Leave blank to keep the saved one.">
-          <b-input :maxlength="500" v-model="form.webhookSecret" name="webhook_secret" type="password"
-            placeholder="••••••••" password-reveal />
-          <p class="help" style="margin-top: 4px;">
-            <a href="#" @click.prevent="onRevealSecret">Show saved secret</a>
-            — loads it into this field where the eye icon toggles visibility.
-          </p>
-        </b-field>
+        <template v-else>
+          <b-field label="Confirm webhook URL" label-position="on-border"
+            message="HTTPS endpoint notified when a subscriber confirms. Empty = disabled.">
+            <b-input :maxlength="2000" v-model="form.webhookUrl" name="webhook_url" type="url"
+              placeholder="https://example.com/hooks/omnipost-confirmed" />
+            <p v-if="isEditing" class="help" style="margin-top: 4px;">
+              Saved value:
+              <copy-text v-if="data.webhookUrl" :text="data.webhookUrl" />
+              <span v-else>—</span>
+            </p>
+          </b-field>
+
+          <b-field label="Confirm webhook secret" label-position="on-border"
+            message="HMAC signing secret. Leave blank to keep the saved one.">
+            <b-input :maxlength="500" v-model="form.webhookSecret" name="webhook_secret" type="password"
+              placeholder="••••••••" password-reveal />
+            <p class="help" style="margin-top: 4px;">
+              <a href="#" @click.prevent="onRevealSecret">Show saved secret</a>
+              — loads it into this field where the eye icon toggles visibility.
+            </p>
+          </b-field>
+        </template>
 
         <b-field :message="$t('lists.archivedHelp')" :label="$t('lists.archived')">
           <b-switch v-model="isArchived" name="status" />
@@ -91,7 +98,7 @@
         <b-button @click="$parent.close()">
           {{ $t('globals.buttons.close') }}
         </b-button>
-        <b-button v-if="isEditing && data.webhookUrl" @click="onTestWebhook" :loading="testingWebhook">
+        <b-button v-if="isEditing && (webhookViaEnv || data.webhookUrl)" @click="onTestWebhook" :loading="testingWebhook">
           Test webhook
         </b-button>
         <b-button v-if="$can('lists:manage_all') || $canList(data.id, 'list:manage')" native-type="submit"
@@ -178,8 +185,8 @@ export default Vue.extend({
     createList() {
       const payload = {
         ...this.form,
-        webhook_url: this.form.webhookUrl,
-        webhook_secret: this.form.webhookSecret,
+        webhook_url: this.webhookViaEnv ? '' : this.form.webhookUrl,
+        webhook_secret: this.webhookViaEnv ? '' : this.form.webhookSecret,
         optin_template_id: this.form.optinTemplateId || 0,
       };
       this.$api.createList(payload).then((data) => {
@@ -193,10 +200,16 @@ export default Vue.extend({
       const payload = {
         id: this.data.id,
         ...this.form,
-        webhook_url: this.form.webhookUrl,
-        webhook_secret: this.form.webhookSecret,
         optin_template_id: this.form.optinTemplateId || 0,
       };
+      if (this.webhookViaEnv) {
+        // Env-configured webhook: never touch the saved per-list values.
+        delete payload.webhook_url;
+        delete payload.webhook_secret;
+      } else {
+        payload.webhook_url = this.form.webhookUrl;
+        payload.webhook_secret = this.form.webhookSecret;
+      }
       this.$api.updateList(payload).then((data) => {
         this.$emit('finished');
         this.$parent.close();
@@ -206,9 +219,9 @@ export default Vue.extend({
 
     onTestWebhook() {
       this.testingWebhook = true;
-      this.$api.testListWebhook(this.data.id).then(() => {
+      this.$api.testListWebhook(this.data.id).then((data) => {
         this.testingWebhook = false;
-        this.$utils.toast('Test event delivered');
+        this.$utils.toast(`Test event delivered to ${data.url}`);
       }).catch(() => {
         this.testingWebhook = false;
       });
@@ -223,7 +236,14 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(['loading', 'profile']),
+    ...mapState(['loading', 'profile', 'serverConfig']),
+
+    // True when confirmation webhooks are configured in the server
+    // environment (PATRA_CONFIRM_WEBHOOKS or the single-target fallback);
+    // the per-list form is then hidden and the env targets are the only ones.
+    webhookViaEnv() {
+      return !!(this.serverConfig && this.serverConfig.confirm_webhook_env);
+    },
 
     isArchived: {
       get() {

@@ -1,0 +1,23 @@
+{{ define "admin-login-welcome" }}
+{{ template "header" .}}
+
+<section class="login login-welcome">
+	<div class="login-welcome-inner">
+		<span class="login-welcome-check" aria-hidden="true">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+		</span>
+		<h2>Signed in</h2>
+		<p class="login-welcome-sub">Welcome back &mdash; taking you to your dashboard&hellip;</p>
+		<span class="login-welcome-bar" aria-hidden="true"><span></span></span>
+		<p class="center small"><a href="{{ .Data.NextURI }}">Continue</a></p>
+	</div>
+</section>
+
+<script>
+	window.setTimeout(function () {
+		window.location.replace("{{ .Data.NextURI }}");
+	}, 900);
+</script>
+
+{{ template "footer" .}}
+{{ end }}

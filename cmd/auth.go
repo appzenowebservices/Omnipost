@@ -15,8 +15,6 @@ import (
 	"time"
 
 	"github.com/appzenowebservices/patra/internal/auth"
-	"github.com/appzenowebservices/patra/internal/i18n"
-	"github.com/appzenowebservices/patra/internal/notifs"
 	"github.com/appzenowebservices/patra/internal/tmptokens"
 	"github.com/appzenowebservices/patra/internal/utils"
 	"github.com/appzenowebservices/patra/models"
@@ -27,8 +25,7 @@ import (
 )
 
 const (
-	passwordResetTTL = 30 * time.Minute
-	twofaTokenTTL    = 5 * time.Minute
+	twofaTokenTTL = 5 * time.Minute
 
 	// Length of reset and 2FA auth tokens.
 	tmpAuthTokenLen = 64
@@ -44,25 +41,12 @@ type loginTpl struct {
 	OIDCProvider     string
 	OIDCProviderLogo string
 	Error            string
+	LoggedOut        bool
 }
 
 type oidcState struct {
 	Nonce string `json:"nonce"`
 	Next  string `json:"next"`
-}
-
-type forgotPasswordTpl struct {
-	Title       string
-	Description string
-	Error       string
-}
-
-type resetPasswordTpl struct {
-	Title       string
-	Description string
-	Token       string
-	Email       string
-	Error       string
 }
 
 type twofaTpl struct {
@@ -98,7 +82,7 @@ func (a *App) LoginPage(c echo.Context) error {
 	if c.Request().Method == http.MethodPost {
 		loginErr = a.doLogin(c)
 		if loginErr == nil {
-			return c.Redirect(http.StatusFound, utils.SanitizeURI(c.FormValue("next")))
+			return c.Redirect(http.StatusFound, welcomeURL(c.FormValue("next")))
 		}
 	}
 
@@ -116,7 +100,7 @@ func (a *App) LoginSetupPage(c echo.Context) error {
 			a.Lock()
 			a.needsUserSetup = false
 			a.Unlock()
-			return c.Redirect(http.StatusFound, utils.SanitizeURI(c.FormValue("next")))
+			return c.Redirect(http.StatusFound, welcomeURL(c.FormValue("next")))
 		}
 	}
 
@@ -269,52 +253,33 @@ func (a *App) OIDCFinish(c echo.Context) error {
 	}
 
 	// Redirect to the next page.
-	return c.Redirect(http.StatusFound, utils.SanitizeURI(state.Next))
+	return c.Redirect(http.StatusFound, welcomeURL(state.Next))
 }
 
-// ForgotPage renders the forgot password page and handles the forgot password form.
-func (a *App) ForgotPage(c echo.Context) error {
-	// Process the forgot password request.
-	if c.Request().Method == http.MethodPost {
-		return a.doForgotPassword(c)
+// LoginWelcomePage renders a short "signed in" screen that forwards to the
+// admin dashboard. It gives the login a smooth, branded transition instead of
+// dumping the user straight onto a loading SPA.
+func (a *App) LoginWelcomePage(c echo.Context) error {
+	next := utils.SanitizeURI(c.QueryParam("next"))
+	if next == "" || next == "/" {
+		next = uriAdmin
 	}
 
-	// Render the forgot page.
-	out := forgotPasswordTpl{Title: a.i18n.T("users.forgotPassword")}
-	return c.Render(http.StatusOK, "admin-forgot-password", out)
+	out := loginTpl{
+		Title:   a.i18n.T("users.login"),
+		NextURI: next,
+	}
+	return c.Render(http.StatusOK, "admin-login-welcome", out)
 }
 
-// ResetPage renders the reset password page and handles the reset password form.
-func (a *App) ResetPage(c echo.Context) error {
-	var (
-		token = strings.TrimSpace(c.QueryParam("token"))
-		email = strings.ToLower(strings.TrimSpace(c.QueryParam("email")))
-	)
-
-	// Validate token and email (don't delete it yet, as we may need it for POST).
-	data, err := tmptokens.Check(email)
-	if err != nil {
-		return c.Render(http.StatusBadRequest, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("users.invalidResetLink")))
+// welcomeURL returns the post-login transition URL for a sanitized next path.
+func welcomeURL(next string) string {
+	next = utils.SanitizeURI(next)
+	if next == "" || next == "/" {
+		next = uriAdmin
 	}
 
-	tk, ok := data.(string)
-	if !ok || tk != token {
-		return c.Render(http.StatusBadRequest, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("users.invalidResetLink")))
-	}
-
-	// Validate that the user exists.
-	_, err = a.core.GetUser(0, "", email)
-	if err != nil {
-		return c.Render(http.StatusBadRequest, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("users.invalidResetLink")))
-	}
-
-	// Process the reset password request form with the new passwords.
-	if c.Request().Method == http.MethodPost {
-		return a.doResetPassword(c, token, email)
-	}
-
-	// Render the reset password form for GET request.
-	return a.renderResetPasswordPage(c, token, email, "")
+	return fmt.Sprintf("%s/login/welcome?next=%s", uriAdmin, url.QueryEscape(next))
 }
 
 // renderLoginPage renders the login page and handles the login form.
@@ -362,6 +327,7 @@ func (a *App) renderLoginPage(c echo.Context, loginErr error) error {
 		OIDCProvider:     oidcProviderName,
 		OIDCProviderLogo: oidcLogo,
 		NextURI:          next,
+		LoggedOut:        c.QueryParam("logged_out") == "1",
 	}
 
 	// If there was an error in the previous state (POST reqest), set it to render in the template.
@@ -626,141 +592,6 @@ func (a *App) doFirstTimeSetup(c echo.Context) error {
 	return nil
 }
 
-// renderResetPasswordPage renders the reset password page.
-func (a *App) renderResetPasswordPage(c echo.Context, token, email, errMsg string) error {
-	out := resetPasswordTpl{
-		Title: a.i18n.T("users.resetPassword"),
-		Token: token,
-		Email: email,
-		Error: errMsg,
-	}
-	return c.Render(http.StatusOK, "admin-reset-password", out)
-}
-
-// doForgotPassword handles the forgot password form submission.
-func (a *App) doForgotPassword(c echo.Context) error {
-	var (
-		email = strings.ToLower(strings.TrimSpace(c.FormValue("email")))
-	)
-
-	// Validate email format.
-	if !utils.ValidateEmail(email) {
-		return c.Render(http.StatusOK, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("users.resetLinkSent")))
-	}
-
-	// Get the user by email.
-	user, err := a.core.GetUser(0, "", email)
-	if err != nil {
-		return c.Render(http.StatusOK, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("users.resetLinkSent")))
-	}
-
-	// If the password login is disabled, do not proceed, but show success message to prevent email enumeration.
-	if !user.PasswordLogin {
-		return c.Render(http.StatusOK, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("users.resetLinkSent")))
-	}
-
-	// Generate a random token.
-	token, err := generateRandomString(tmpAuthTokenLen)
-	if err != nil {
-		a.log.Printf("error generating reset token: %v", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, a.i18n.T("globals.messages.internalError"))
-	}
-
-	// Store the reset token in tmptokens.
-	tmptokens.Set(email, passwordResetTTL, token)
-
-	// Prepare the reset URL.
-	resetURL := fmt.Sprintf("%s/admin/reset?token=%s&email=%s", a.urlCfg.RootURL, token, url.QueryEscape(email))
-
-	// Prepare the email.
-	var msg bytes.Buffer
-	data := struct {
-		ResetURL string
-		L        *i18n.I18n
-	}{
-		ResetURL: resetURL,
-		L:        a.i18n,
-	}
-
-	// Render the email template.
-	if err := notifs.Tpls.ExecuteTemplate(&msg, notifs.TplForgotPassword, data); err != nil {
-		a.log.Printf("error compiling notification template '%s': %v", notifs.TplForgotPassword, err)
-		return echo.NewHTTPError(http.StatusInternalServerError, a.i18n.T("globals.messages.internalError"))
-	}
-
-	subject, body := notifs.GetTplSubject(a.i18n.T("email.forgotPassword.subject"), msg.Bytes())
-
-	// Send the email.
-	if err := a.emailMsgr.Push(models.Message{
-		From:    a.cfg.FromEmail,
-		To:      []string{email},
-		Subject: subject,
-		Body:    body,
-	}); err != nil {
-		a.log.Printf("error sending reset email: %s", err)
-	}
-
-	// Show the success e-mail nonetheless to prevent e-mail enumeration.
-	return c.Render(http.StatusOK, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("users.resetLinkSent")))
-}
-
-// doResetPassword handles the reset password form submission.
-func (a *App) doResetPassword(c echo.Context, token, email string) error {
-	var (
-		password  = c.FormValue("password")
-		password2 = c.FormValue("password2")
-	)
-
-	// Validate password.
-	if !strHasLen(password, 8, stdInputMaxLen) {
-		return a.renderResetPasswordPage(c, token, email, a.i18n.Ts("globals.messages.invalidFields", "name", "password"))
-	}
-	if password != password2 {
-		return a.renderResetPasswordPage(c, token, email, a.i18n.T("users.passwordMismatch"))
-	}
-
-	// Validate and consume the token (this deletes it).
-	data, err := tmptokens.Get(email)
-	if err != nil {
-		return c.Render(http.StatusBadRequest, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("users.invalidResetLink")))
-	}
-
-	tk, ok := data.(string)
-	if !ok || tk != token {
-		return c.Render(http.StatusBadRequest, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("users.invalidResetLink")))
-	}
-
-	// Get the user.
-	user, err := a.core.GetUser(0, "", email)
-	if err != nil {
-		return c.Render(http.StatusBadRequest, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("users.invalidResetLink")))
-	}
-
-	// Password login is disabled for the user.
-	if !user.PasswordLogin {
-		return c.Render(http.StatusBadRequest, tplMessage, makeMsgTpl(a.i18n.T("users.resetPassword"), "", a.i18n.T("public.invalidFeature")))
-	}
-
-	user.Password = null.NewString(password, true)
-	if _, err := a.core.UpdateUserProfile(user.ID, user); err != nil {
-		a.log.Printf("error updating user password: %v", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, a.i18n.T("globals.messages.internalError"))
-	}
-
-	// Invalidate all existing sessions for the user after password reset.
-	if err := a.core.DeleteUserSessions(user.ID, ""); err != nil {
-		a.log.Printf("error destroying sessions after password reset for user_id=%d: %v", user.ID, err)
-	}
-
-	// Log the user in directly without forcing a manual login right after password change.
-	if err := a.auth.SaveSession(user, "", c); err != nil {
-		return err
-	}
-
-	// Redirect to the admin page.
-	return c.Redirect(http.StatusFound, uriAdmin)
-}
-
 // renderTwofaPage renders the 2FA verification page.
 func (a *App) renderTwofaPage(c echo.Context, token, next, errMsg string) error {
 	out := twofaTpl{
@@ -808,7 +639,8 @@ func (a *App) doTwofaVerify(c echo.Context, token string, userID int, next strin
 	}
 
 	// Redirect to the next page.
-	return c.Redirect(http.StatusFound, next)
+	// Redirect to the admin page.
+	return c.Redirect(http.StatusFound, welcomeURL(next))
 }
 
 // GenerateTOTPQR generates a TOTP QR code for a user to scan with their authenticator app.

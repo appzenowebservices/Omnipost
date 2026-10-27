@@ -253,12 +253,9 @@ func initHTTPHandlers(e *echo.Echo, a *App) {
 		// Public admin endpoints (login page, OIDC endpoints, password reset).
 		g.GET(path.Join(uriAdmin, "/login"), a.LoginPage)
 		g.POST(path.Join(uriAdmin, "/login"), a.LoginPage)
+		g.GET(path.Join(uriAdmin, "/login/welcome"), noIndex(a.LoginWelcomePage))
 		g.GET(path.Join(uriAdmin, "/login/twofa"), a.TwofaPage)
 		g.POST(path.Join(uriAdmin, "/login/twofa"), a.TwofaPage)
-		g.GET(path.Join(uriAdmin, "/forgot"), a.ForgotPage)
-		g.POST(path.Join(uriAdmin, "/forgot"), a.ForgotPage)
-		g.GET(path.Join(uriAdmin, "/reset"), a.ResetPage)
-		g.POST(path.Join(uriAdmin, "/reset"), a.ResetPage)
 
 		if a.cfg.Security.OIDC.Enabled {
 			g.POST("/auth/oidc", a.OIDCLogin)

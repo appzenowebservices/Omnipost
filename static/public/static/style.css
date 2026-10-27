@@ -815,6 +815,139 @@ body:has(.login) footer a:hover {
   background: rgba(2, 6, 23, 0.8);
   outline: none;
 }
+.login .password-field {
+  position: relative;
+  display: block;
+}
+.login .password-field input {
+  padding-right: 46px;
+}
+.login .password-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 42px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #94A3B8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 10px 10px 0;
+  transition: color 0.2s ease;
+}
+.login .password-toggle:hover,
+.login .password-toggle:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
+.login .password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+.login .password-toggle .eye-hide {
+  display: none;
+}
+.login .password-field.is-visible .eye-show {
+  display: none;
+}
+.login .password-field.is-visible .eye-hide {
+  display: block;
+}
+.login-notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  border-radius: 10px;
+  padding: 11px 13px;
+  margin: 0 0 20px 0;
+  color: #A7F3D0;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+.login-notice strong {
+  color: #ECFDF5;
+}
+.login-notice-icon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(52, 211, 153, 0.18);
+  color: #34D399;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 12px;
+}
+.login-welcome-inner {
+  text-align: center;
+}
+.login-welcome-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  color: #34D399;
+  animation: loginPop 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.login-welcome-check svg {
+  width: 26px;
+  height: 26px;
+}
+.login-welcome h2 {
+  margin: 0 0 8px 0;
+}
+.login-welcome-sub {
+  margin: 0 0 22px 0;
+  color: #94A3B8;
+}
+.login-welcome-bar {
+  display: block;
+  max-width: 260px;
+  height: 4px;
+  margin: 0 auto 18px auto;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(148, 163, 184, 0.16);
+}
+.login-welcome-bar span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+  transform-origin: left;
+  animation: loginBar 0.85s ease forwards;
+}
+@keyframes loginBar {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes loginPop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 .login .error {
   background: rgba(127, 29, 29, 0.35);
   border: 1px solid rgba(248, 113, 113, 0.45);

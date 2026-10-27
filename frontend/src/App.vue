@@ -106,6 +106,18 @@
     </div>
 
     <b-loading v-if="!$root.isLoaded" active />
+
+    <div v-if="isLoggingOut" class="logout-overlay">
+      <div class="logout-card">
+        <img class="logout-logo" src="@/assets/logo.png" alt="Patra" />
+        <span class="logout-check" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+        </span>
+        <h3>Signing you out&hellip;</h3>
+        <p>Thanks for using Patra.</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -128,6 +140,7 @@ export default Vue.extend({
       activeItem: {},
       activeGroup: {},
       windowWidth: window.innerWidth,
+      isLoggingOut: false,
     };
   },
 
@@ -171,8 +184,17 @@ export default Vue.extend({
     },
 
     doLogout() {
-      this.$api.logout().then(() => {
-        document.location.href = uris.root;
+      // Confirm first, then show the sign-out transition and land on the
+      // login page with a "signed out" confirmation.
+      this.$utils.confirm(this.$t('users.logoutConfirm'), () => {
+        this.isLoggingOut = true;
+
+        const go = () => {
+          window.setTimeout(() => {
+            document.location.href = '/admin/login?logged_out=1';
+          }, 700);
+        };
+        this.$api.logout().then(go).catch(go);
       });
     },
 

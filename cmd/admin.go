@@ -36,6 +36,11 @@ type serverConfig struct {
 	NeedsRestart  bool            `json:"needs_restart"`
 	HasLegacyUser bool            `json:"has_legacy_user"`
 	Version       string          `json:"version"`
+
+	// ConfirmWebhookEnv indicates that subscriber-confirmation webhooks are
+	// configured through PATRA_CONFIRM_WEBHOOKS (or the single-target
+	// PATRA_CONFIRM_WEBHOOK_URL fallback) rather than the per-list form.
+	ConfirmWebhookEnv bool `json:"confirm_webhook_env"`
 }
 
 // GetServerConfig returns general server config.
@@ -54,6 +59,7 @@ func (a *App) GetServerConfig(c echo.Context) error {
 			IndividualTracking: a.cfg.Privacy.IndividualTracking,
 		},
 	}
+	out.ConfirmWebhookEnv = envWebhookConfigured()
 	out.PublicSubscription.Enabled = a.cfg.EnablePublicSubPage
 	for _, d := range a.cfg.Security.TrustedURLs {
 		if d == "*" {

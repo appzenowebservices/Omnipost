@@ -21,7 +21,6 @@ const (
 	TplCampaignStatus  = "campaign-status"
 	TplSubscriberOptin = "subscriber-optin"
 	TplSubscriberData  = "subscriber-data"
-	TplForgotPassword  = "forgot-password"
 )
 
 type FuncPush func(msg models.Message) error

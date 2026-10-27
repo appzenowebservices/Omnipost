@@ -1,30 +1,258 @@
 {{ define "optin" }}
-{{ template "header" .}}
-<section class="optin">
-    <h2>{{ L.T "public.confirmSubTitle" }}</h2>
-    <p>
-        {{ L.T "public.confirmSubInfo" }}
-    </p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Confirm your subscription · Apni Desi Dukaan</title>
+	<meta name="robots" content="noindex" />
+	<link rel="icon" href="https://www.apnidesidukaan.com/logo.png" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&amp;display=swap" rel="stylesheet" />
+	<link rel="stylesheet" href="/public/static/optin.css?v={{ .AssetVersion }}" />
+</head>
+<body>
+	<div class="shell">
+		<header class="topbar">
+			<a class="brand" href="https://www.apnidesidukaan.com">
+				<img src="https://www.apnidesidukaan.com/logo.png" alt="Apni Desi Dukaan" />
+				<span>
+					<span class="brand-name">Apni Desi Dukaan</span>
+					<span class="brand-sub">YOUR LOCAL MARKETPLACE, ONLINE</span>
+				</span>
+			</a>
+			<div class="top-right">
+				<span class="pill"><span class="pill-dot"></span> Local stores · Stronger together</span>
+				<a class="help-link" href="mailto:contact@appzenowebservices.com">Need help?</a>
+			</div>
+		</header>
 
-    <form method="post" class="optin-form">
-        <ul>
-            {{ range $i, $l := .Data.Lists }}
-                <input type="hidden" name="l" value="{{ $l.UUID }}" />
-                {{ if eq $l.Type "public" }}
-                    <li>{{ $l.Name }}</li>
-                {{ else }}
-                    <li>{{ L.Ts "public.subPrivateList" }}</li>
-                {{ end }}
-            {{ end }}
-        </ul>
-        <p class="submit">
-            <input type="hidden" name="confirm" value="true" />
-            <button type="submit" class="button" id="btn-unsub">
-                {{ L.Ts "public.confirmSub" }}
-            </button>
-        </p>
-    </form>
-</section>
+		<main>
+			<section class="hero">
+				<div class="hero-copy">
+					<div class="eyebrow"><span class="eyebrow-rule"></span> Welcome aboard</div>
+					<h1>You’re one click from the <span class="accent">good stuff.</span></h1>
+					<p class="lead">
+						Confirm your subscription and step into Apni Desi Dukaan — the neighbourhood marketplace
+						where fresh arrivals, handpicked local offers and the stories behind your favourite
+						stores come together.
+					</p>
+					<ul class="perks">
+						<li>
+							<span class="tick" aria-hidden="true">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+							</span>
+							Fresh arrivals
+						</li>
+						<li>
+							<span class="tick" aria-hidden="true">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+							</span>
+							Local offers
+						</li>
+						<li>
+							<span class="tick" aria-hidden="true">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+							</span>
+							Store stories
+						</li>
+					</ul>
+					<div class="trust">
+						<span class="trust-rule"></span>
+						<span><strong>Made for your neighbourhood.</strong> No noise — just the good stuff.</span>
+					</div>
+				</div>
 
-{{ template "footer" .}}
+				<aside class="confirm-card">
+					<div class="card-icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+							<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
+							<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+							<path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
+							<path d="M2 7h20"/>
+							<path d="M22 7v3a2 2 0 0 1-2 2 2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/>
+						</svg>
+					</div>
+					<h2>Confirm your subscription</h2>
+					<p class="card-sub">One last step and you’re in. Confirm the list below to start hearing from us.</p>
+
+					<form method="post" id="confirm-form">
+						{{ range .Data.Lists }}
+						<input type="hidden" name="l" value="{{ .UUID }}" />
+						{{ end }}
+						<input type="hidden" name="confirm" value="true" />
+
+						<div class="list-box">
+							{{ range .Data.Lists }}
+							<div class="list-row">
+								<span class="list-check" aria-hidden="true">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+								</span>
+								<span class="list-name">
+									{{ if eq .Type "public" }}{{ .Name }}{{ else }}{{ L.Ts "public.subPrivateList" }}{{ end }}
+								</span>
+								{{ if eq .Type "public" }}<span class="list-tag">Newsletter</span>{{ end }}
+							</div>
+							{{ end }}
+						</div>
+
+						<button type="submit" class="btn" id="confirm-btn">
+							<span class="btn-label">Confirm subscription</span>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+							</svg>
+						</button>
+
+						<p class="micro">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+							</svg>
+							<span>This link is unique to your e-mail address. Nothing is sent until you confirm.</span>
+						</p>
+					</form>
+
+					<div class="card-foot">
+						<span>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+							Safe &amp; private
+						</span>
+						<span>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+							Unsubscribe anytime
+						</span>
+					</div>
+				</aside>
+			</section>
+
+			<section class="awaits" aria-labelledby="awaits-title">
+				<div class="section-head">
+					<div>
+						<div class="eyebrow"><span class="eyebrow-rule"></span> What awaits you</div>
+						<h2 id="awaits-title">More than a newsletter — a front-row seat to your neighbourhood.</h2>
+					</div>
+					<p class="section-note">Here’s what lands in your inbox once you confirm.</p>
+				</div>
+
+				<div class="grid">
+					<article class="card">
+						<div class="card-icon-sm" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+								<path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/>
+								<path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.6-7.4"/>
+								<path d="M4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/>
+							</svg>
+						</div>
+						<h3>Fresh arrivals</h3>
+						<p>Be first to see new stock, seasonal produce and just-in finds from stores around you.</p>
+					</article>
+
+					<article class="card">
+						<div class="card-icon-sm" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/>
+								<circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/>
+							</svg>
+						</div>
+						<h3>Local offers</h3>
+						<p>Handpicked deals and neighbourhood-only prices, without the endless scrolling.</p>
+					</article>
+
+					<article class="card">
+						<div class="card-icon-sm" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+								<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
+								<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+								<path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
+								<path d="M2 7h20"/>
+							</svg>
+						</div>
+						<h3>Store stories</h3>
+						<p>Meet the people behind your favourite shops and the stories that make them special.</p>
+					</article>
+
+					<article class="card">
+						<div class="card-icon-sm" aria-hidden="true">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M10.268 21a2 2 0 0 0 3.464 0"/>
+								<path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/>
+							</svg>
+						</div>
+						<h3>Early access</h3>
+						<p>First dibs on launches, festive drops and community events before everyone else.</p>
+					</article>
+				</div>
+			</section>
+
+			<section class="promise">
+				<div class="promise-copy">
+					<div class="promise-badge" aria-hidden="true">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+						</svg>
+					</div>
+					<div>
+						<h2>Every confirmation supports a local store.</h2>
+						<p>When you shop local, more of every rupee stays in the neighbourhood — and the whole community wins.</p>
+					</div>
+				</div>
+				<a class="promise-cta" href="https://www.apnidesidukaan.com">
+					Explore the marketplace
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+				</a>
+			</section>
+
+			<section class="how" aria-labelledby="how-title">
+				<div class="eyebrow"><span class="eyebrow-rule"></span> How it works</div>
+				<h2 id="how-title" style="margin:14px 0 0;font-size:clamp(24px,3vw,32px);letter-spacing:-0.025em;font-weight:900;">Three small steps, one big welcome.</h2>
+				<div class="steps">
+					<div class="step">
+						<span class="step-num">01</span>
+						<h3>Confirm your e-mail</h3>
+						<p>Tap the button above. That’s it — you’re officially on the list.</p>
+					</div>
+					<div class="step">
+						<span class="step-num">02</span>
+						<h3>Get the good stuff</h3>
+						<p>Fresh arrivals, local offers and store stories, straight to your inbox.</p>
+					</div>
+					<div class="step">
+						<span class="step-num">03</span>
+						<h3>Shop local</h3>
+						<p>Use what you discover to support the stores that make your neighbourhood special.</p>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<footer class="site-footer">
+			<div class="footer-row">
+				<div>
+					<div class="footer-brand">Apni Desi Dukaan</div>
+					<span class="footer-sub">YOUR LOCAL MARKETPLACE, ONLINE</span>
+				</div>
+				<div class="footer-links">
+					<span>Questions? <a href="mailto:contact@appzenowebservices.com">contact@appzenowebservices.com</a></span>
+					<a href="https://www.apnidesidukaan.com">Visit the marketplace</a>
+				</div>
+			</div>
+			<p class="footer-meta">© Apni Desi Dukaan. <span class="powered-by">Powered by <img src="/public/static/logo.svg?v={{ .AssetVersion }}" alt="Patra" title="Patra" class="patra-mark" /></span></p>
+		</footer>
+	</div>
+
+	<script>
+		(function () {
+			var form = document.getElementById('confirm-form');
+			if (!form) return;
+			form.addEventListener('submit', function () {
+				var btn = document.getElementById('confirm-btn');
+				if (!btn || btn.disabled) return;
+				btn.disabled = true;
+				var label = btn.querySelector('.btn-label');
+				if (label) label.textContent = 'Confirming…';
+			});
+		})();
+	</script>
+</body>
+</html>
 {{ end }}

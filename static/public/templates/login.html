@@ -14,6 +14,12 @@
 	</div>
 	<div class="login-card">
 		<h2>{{ .L.T "users.login"}}</h2>
+		{{ if .Data.LoggedOut }}
+		<div class="login-notice">
+			<span class="login-notice-icon" aria-hidden="true">&#10003;</span>
+			<div><strong>You&rsquo;ve been signed out</strong><br />Sign in again whenever you&rsquo;re ready.</div>
+		</div>
+		{{ end }}
 		{{ if .Data.PasswordEnabled }}
 		<form method="post" action="/admin/login" class="form">
 			<div>
@@ -25,7 +31,23 @@
 				</p>
 				<p>
 					<label for="password">{{ .L.T "users.password" }}</label>
-					<input id="password" type="password" name="password" required minlength="8" autocomplete="current-password" />
+					<span class="password-field">
+						<input id="password" type="password" name="password" required minlength="8" autocomplete="current-password" />
+						<button type="button" class="password-toggle" data-password-toggle="password"
+							aria-label="Show password" aria-pressed="false" tabindex="-1">
+							<svg class="eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+								<circle cx="12" cy="12" r="3" />
+							</svg>
+							<svg class="eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="m2 2 20 20" />
+								<path d="M6.71 6.71A10.94 10.94 0 0 0 2 12s3.5 7 10 7a10.9 10.9 0 0 0 5.29-1.29" />
+								<path d="M9.9 4.24A10.94 10.94 0 0 1 12 4c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+							</svg>
+						</button>
+					</span>
 				</p>
 
 				{{ if .Data.Error }}<p><span class="error">{{ .Data.Error }}</span></p>{{ end }}
@@ -48,10 +70,29 @@
 		</form>
 		{{ end }}
 
-		<p class="center small"><a href="{{ .RootURL }}/admin/forgot">{{ .L.T "users.forgotPassword" }}</a></p>
 	</div>
 
 </section>
+
+<script>
+	(function () {
+		document.querySelectorAll("[data-password-toggle]").forEach(function (btn) {
+			var input = document.getElementById(btn.getAttribute("data-password-toggle"));
+			var field = btn.closest(".password-field");
+			if (!input || !field) { return; }
+
+			btn.addEventListener("click", function () {
+				var show = input.type === "password";
+				input.type = show ? "text" : "password";
+				field.classList.toggle("is-visible", show);
+				btn.setAttribute("aria-pressed", show ? "true" : "false");
+				btn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+				input.focus({ preventScroll: true });
+				try { input.setSelectionRange(input.value.length, input.value.length); } catch (e) {}
+			});
+		});
+	})();
+</script>
 
 {{ template "footer" .}}
 {{ end }}

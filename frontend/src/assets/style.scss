@@ -1613,3 +1613,71 @@ th.role-toggle-select a {
 * {
   scrollbar-color: #2A3A55 transparent;
 }
+
+/* Sign-out transition */
+.logout-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(900px 520px at 50% -10%, rgba(24, 79, 134, 0.45), transparent 65%),
+    #070B14;
+}
+.logout-card {
+  text-align: center;
+  padding: 38px 48px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(7, 11, 20, 0.95));
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 20px;
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.9);
+  color: #E2E8F0;
+  animation: logoutIn 0.35s ease;
+}
+.logout-logo {
+  display: block;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 18px auto;
+  border-radius: 12px;
+}
+.logout-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  color: #34D399;
+}
+.logout-check svg {
+  width: 24px;
+  height: 24px;
+}
+.logout-card h3 {
+  margin: 0 0 6px 0;
+  color: #F8FAFC;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.logout-card p {
+  margin: 0;
+  color: #94A3B8;
+  font-size: 0.88rem;
+}
+@keyframes logoutIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
